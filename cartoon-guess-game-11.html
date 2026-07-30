@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خمّن الكرتون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFF6E5;
+    --ink:#1B1B1B;
+    --pop-red:#E6473C;
+    --pop-yellow:#FFC93C;
+    --pop-blue:#3D8BD4;
+    --pop-green:#4CAF7D;
+    --panel-shadow: 6px 6px 0 var(--ink);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Cairo',sans-serif;
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(var(--ink) 1px, transparent 1.2px);
+    background-size: 18px 18px;
+    background-position: -9px -9px;
+    color: var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:20px 14px 60px;
+  }
+  .app{ width:100%; max-width:560px; }
+  h1.logo{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:2.4rem;
+    text-align:center;
+    color:var(--ink);
+    margin:6px 0 2px;
+    letter-spacing:1px;
+  }
+  h1.logo span{ color:var(--pop-red); }
+  .tagline{
+    text-align:center;
+    font-weight:600;
+    color:#555;
+    margin-bottom:22px;
+    font-size:0.95rem;
+  }
+  .panel{
+    background:#fff;
+    border:3px solid var(--ink);
+    border-radius:16px;
+    box-shadow: var(--panel-shadow);
+    padding:22px 20px;
+    margin-bottom:18px;
+  }
+  .panel.tilt{ transform: rotate(-0.6deg); }
+  label{
+    display:block;
+    font-weight:700;
+    margin-bottom:6px;
+    font-size:0.92rem;
+  }
+  input[type=text], input[type=password], textarea{
+    width:100%;
+    font-family:'Cairo',sans-serif;
+    font-size:1rem;
+    padding:12px 14px;
+    border:2.5px solid var(--ink);
+    border-radius:10px;
+    margin-bottom:14px;
+    background:var(--paper);
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  textarea{ resize:vertical; }
+  input[type=text]:focus, input[type=password]:focus, textarea:focus{ outline:3px solid var(--pop-blue); outline-offset:1px; }
+  .btn{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    padding:12px 22px;
+    border:3px solid var(--ink);
+    border-radius:12px;
+    cursor:pointer;
+    background:var(--pop-yellow);
+    color:var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    transition: transform .08s ease;
+    width:100%;
+  }
+  .btn:active{ transform: translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn.red{ background:var(--pop-red); color:#fff; }
+  .btn.green{ background:var(--pop-green); color:#fff; }
+  .btn.blue{ background:var(--pop-blue); color:#fff; }
+  .btn.small{ width:auto; font-size:0.85rem; padding:8px 14px; box-shadow:3px 3px 0 var(--ink); }
+  .row{ display:flex; gap:10px; }
+  .row .btn{ flex:1; }
+  .code-badge{
+    display:inline-block;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:1.5rem;
+    letter-spacing:4px;
+    background:var(--pop-blue);
+    color:#fff;
+    border:3px solid var(--ink);
+    border-radius:10px;
+    padding:6px 18px;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .center{ text-align:center; }
+  .players{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+  .chip{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:20px;
+    padding:5px 14px;
+    font-weight:700;
+    font-size:0.85rem;
+  }
+  .chip.me{ background:var(--pop-yellow); }
+  .chip.uploader::after{ content:" 🎨"; }
+  .divider{ border:none; border-top:2.5px dashed var(--ink); margin:16px 0; opacity:0.5; }
+  .game-img-wrap{
+    border:3px solid var(--ink);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:16px;
+    background:#eee;
+  }
+  .game-img-wrap img{ width:100%; display:block; }
+  .file-drop{
+    border:3px dashed var(--ink);
+    border-radius:14px;
+    padding:26px 14px;
+    text-align:center;
+    font-weight:700;
+    cursor:pointer;
+    background:var(--paper);
+    margin-bottom:14px;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .file-drop.has-img{ padding:0; border-style:solid; overflow:hidden; }
+  .file-drop.has-img img{ width:100%; display:block; max-height:220px; object-fit:cover; }
+  .guess-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-bottom:8px;
+  }
+  .guess-text{ font-weight:700; }
+  .guess-text.wrong{ text-decoration:line-through; opacity:0.55; }
+  .guess-text.correct{ color:var(--pop-green); }
+  .verdict-btns{ display:flex; gap:6px; }
+  .verdict-btns .btn{ width:auto; padding:6px 12px; font-size:0.85rem; box-shadow:2px 2px 0 var(--ink); }
+  .badge-tag{
+    font-size:0.75rem;
+    font-weight:700;
+    padding:2px 9px;
+    border-radius:10px;
+    background:#eee;
+    border:1.5px solid var(--ink);
+  }
+  .waiting-msg{ text-align:center; font-weight:700; color:#666; padding:20px 0; }
+  .burst{
+    text-align:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:1.4rem;
+    color:var(--pop-red);
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop{ 0%{ transform:scale(0.6); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  .error-msg{ color:var(--pop-red); font-weight:700; font-size:0.85rem; margin-top:-8px; margin-bottom:12px; }
+  .small-link{ text-align:center; margin-top:10px; }
+  .small-link a{ color:#777; font-size:0.85rem; cursor:pointer; text-decoration:underline; }
+  .tabs{ display:flex; gap:8px; margin-bottom:18px; }
+  .tab-btn{
+    flex:1;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.95rem;
+    padding:10px;
+    border:3px solid var(--ink);
+    border-radius:12px;
+    cursor:pointer;
+    background:#fff;
+    color:var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    transition: transform .08s ease;
+  }
+  .tab-btn:active{ transform: translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+  .tab-btn.active{ background:var(--pop-blue); color:#fff; }
+  select{
+    width:100%;
+    font-family:'Cairo',sans-serif;
+    font-size:1rem;
+    padding:12px 14px;
+    border:2.5px solid var(--ink);
+    border-radius:10px;
+    margin-bottom:14px;
+    background:var(--paper);
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .cartoon-picks{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .cartoon-chip{
+    border:2.5px solid var(--ink);
+    border-radius:16px;
+    padding:7px 14px;
+    font-weight:700;
+    font-size:0.85rem;
+    cursor:pointer;
+    background:#fff;
+    box-shadow:3px 3px 0 var(--ink);
+    transition: transform .08s ease;
+  }
+  .cartoon-chip:active{ transform: translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+  .cartoon-chip.selected{ background:var(--pop-yellow); }
+  .add-chip{
+    border:2.5px dashed var(--ink) !important;
+    background:var(--pop-yellow) !important;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .desc-card{
+    background:#EAF6EF;
+    border:2.5px solid var(--pop-green);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:14px;
+    white-space:pre-wrap;
+    font-size:0.88rem;
+    line-height:1.6;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .header-wrap{ position:relative; }
+  .leave-btn{
+    position:absolute;
+    top:0;
+    left:0;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.8rem;
+    color:#fff;
+    cursor:pointer;
+    background:var(--pop-red);
+    border:2.5px solid var(--ink);
+    border-radius:20px;
+    padding:6px 14px;
+    box-shadow:3px 3px 0 var(--ink);
+    transition: transform .08s ease;
+  }
+  .leave-btn:active{ transform: translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+</style>
+
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const STORAGE_PREFIX = 'cartoon-room:';
+const USER_STORAGE_PREFIX = 'cartoon-user:';
+let account = null;    // {id, username}
+let me = null;          // {id, name}
+let roomCode = null;
+let state = null;       // shared room state
+let pollTimer = null;
+let uploadedImageData = null; // temp base64 while filling upload form
+let entryMode = 'create'; // 'create' | 'join'
+let showPresets = false;
+let showCustomInput = false;
+let draftCartoonName = null;
+let customImageData = null;
+let draftDescription = null;
+let showProfile = false;
+let lastKnownRoomScore = 0;
+
+function fmtDesc(f){
+  const lines = [];
+  if(f.channel) lines.push('القناة: ' + f.channel);
+  lines.push('الكوكب (إن كان من سبيستون): ' + (f.planet || 'لا ينطبق'));
+  if(f.count) lines.push('عدد الشخصيات الرئيسية: ' + f.count);
+  if(f.category) lines.push('التصنيف: ' + f.category);
+  if(f.characters) lines.push('الشخصيات: ' + f.characters);
+  if(f.story) lines.push('القصة: ' + f.story);
+  return lines.join('\n');
+}
+
+const CARTOON_PRESETS = [
+  {name:'توم آند جيري', description:fmtDesc({channel:'قنوات متعددة حول العالم (دبلجات عربية عدة)', count:'2', category:'كوميدي بلا حوار تقريباً', characters:'توم: قط أبيض وأزرق يحاول الإمساك بجيري باستمرار. جيري: فأر بني ذكي يتفوق على توم دائماً بالحيلة.', story:'مطاردات كوميدية متكررة بين قط وفأر يعيشان في نفس المنزل.'})},
+  {name:'بوكيمون', description:fmtDesc({channel:'قنوات متعددة (دبلجة عربية على أكثر من قناة)', count:'3', category:'أنمي مغامرات', characters:'آش كيتشوم: مدرب بوكيمون طموح. بيكاتشو: بوكيمون كهربائي أصفر مخلص لآش. ميستي وبروك: رفقاء رحلة آش.', story:'صبي يسافر لجمع وتدريب مخلوقات بوكيمون وخوض بطولات ليصبح أفضل مدرب.'})},
+  {name:'دراغون بول', description:fmtDesc({channel:'قنوات متعددة (دبلجة عربية على أكثر من قناة)', count:'4', category:'أنمي أكشن وقتال', characters:'غوكو: مقاتل ساذج القلب هائل القوة. فيجيتا: أمير سايان منافس غوكو. بولما: عالمة مخترعة صديقة غوكو. بيكولو: مقاتل غامض يتحول لحليف.', story:'مقاتل يبحث عن كرات التنين السحرية ويواجه أعداء أقوى مع تطور قوته باستمرار.'})},
+  {name:'سبونج بوب', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'4', category:'كوميدي', characters:'سبونج بوب: إسفنجة بحرية مرحة تعمل بمطعم كراستي كراب. باتريك: نجم بحر كسول صديق سبونج بوب. سكويدوارد: أخطبوط عصبي جار سبونج بوب. السيد كرابز: صاحب المطعم البخيل.', story:'إسفنجة بحرية مرحة تعيش مغامرات يومية في مدينة بيكيني بوتوم تحت الماء.'})},
+  {name:'بن تن', description:fmtDesc({channel:'قنوات متعددة حول العالم', planet:'لا ينطبق (ليس من سبيستون كأصل، لكن أشكال بن الفضائية تنتمي لكواكب مختلفة)', count:'2', category:'أكشن وخيال علمي', characters:'بن تينيسون: صبي يمتلك ساعة أومنيتركس الفضائية. جوين: ابنة عم بن تساعده بمغامراته.', story:'صبي يجد ساعة فضائية تحوّله إلى مخلوقات غريبة ذات قوى خارقة يحارب بها الأشرار.'})},
+  {name:'سكوبي دو', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'5', category:'كوميدي وغموض', characters:'سكوبي دو: كلب جبان يحب الطعام. شاغي: صديق سكوبي الجبان أيضاً. فريد وديفني وفيلما: بقية أفراد فريق التحقيق.', story:'مجموعة أصدقاء وكلبهم يحلون ألغاز أشباح وأحداث غامضة في كل حلقة.'})},
+  {name:'المهرج تيتو', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'غير مؤكد بدقة', category:'كوميدي', characters:'تيتو: مهرج غريب الأطوار محور القصة، محاط بحيوانات وشخصيات ناطقة.', story:'مغامرات كوميدية يومية لمهرج غريب الأطوار مع أصدقائه من الحيوانات.'})},
+  {name:'ريمي', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'2', category:'دراما ومغامرة', characters:'ريمي: طفل يتيم يتنقل بحثاً عن عائلته. فيتاليس: عازف مسنّ يتبنى ريمي ويرافقه بالرحلة.', story:'طفل يتيم يتنقل من مكان لآخر ويعيش مغامرات مؤثرة بحثاً عن أهله وعائلته الحقيقية.'})},
+  {name:'غرندايزر', description:fmtDesc({channel:'دبلجة عربية على قنوات متعددة (اشتهر قديماً)', planet:'كوكب فيغا (موطن البطل الأصلي قبل تدميره من الغزاة)', count:'3', category:'أنمي خيال علمي وروبوتات', characters:'ديوك فليمنغ (أكتيون): قائد الروبوت غرندايزر. الأميرة ريحانة: مساعدة قريبة من البطل. الدكتور بروكيت: عالم يدعم البطل بالتقنية.', story:'روبوت فضائي عملاق يقوده بطل غريب عن كوكب الأرض للدفاع عنها من غزو فضائي معادٍ.'})},
+  {name:'كابتن ماجد', description:fmtDesc({channel:'دبلجة عربية على قنوات متعددة (اشتهر عبر سبيستون)', count:'3', category:'أنمي رياضي', characters:'ماجد (تسوباسا): لاعب كرة قدم موهوب يحلم بالاحتراف. عاصم (وكابايشي): حارس مرمى صديق ماجد ومنافسه أحياناً. طارق (هيوغا): مهاجم قوي التسديد.', story:'لاعب كرة قدم صغير يسعى لتحقيق حلمه بالاحتراف من خلال البطولات المدرسية والدولية.'})},
+  {name:'عدنان ولينا', description:fmtDesc({channel:'دبلجة عربية على قنوات متعددة (اشتهر عبر سبيستون)', count:'2', category:'أنمي مغامرة وخيال علمي', characters:'عدنان: صبي يعيش بجزيرة معزولة بعد كارثة عالمية. لينا: فتاة صغيرة يحميها عدنان ويبحثان معاً عن كنز وأمان.', story:'طفلان يعيشان بعد كارثة عالمية أغرقت أغلب اليابسة، ويخوضان مغامرة بحثاً عن كنز مفقود وحياة آمنة.'})},
+  {name:'سالي', description:fmtDesc({channel:'دبلجة عربية على قنوات متعددة (اشتهر عبر سبيستون)', count:'2', category:'أنمي سحر وفانتازيا', characters:'سالي: أميرة صغيرة من عالم السحر تعيش بين البشر متخفية. كاباو وموري: مساعدا سالي الساحران الصغيران.', story:'أميرة ساحرة صغيرة تعيش بين البشر متخفية وتتعلم استخدام قواها السحرية بحكمة ومسؤولية.'})},
+  {name:'الفتيات الخارقات', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'3', category:'أكشن وكوميدي', characters:'بلوسم: قائدة الفتيات الخارقات وأكثرهن تنظيماً. بابلز: الأكثر لطفاً ومرحاً بينهن. باتركب: الأكثر شراسة وقوة بدنية.', story:'ثلاث فتيات صغيرات اكتسبن قوى خارقة بالصدفة ويستخدمنها لحماية مدينتهن من الأشرار.'})},
+  {name:'ناروتو', description:fmtDesc({channel:'قنوات متعددة (دبلجة عربية على أكثر من قناة)', count:'3', category:'أنمي أكشن ونينجا', characters:'ناروتو: نينجا صغير يحلم بأن يصبح زعيم قريته. ساسكي: زميل ناروتو الموهوب المهووس بالانتقام. ساكورا: زميلتهما الذكية المتدربة على الطب النينجا.', story:'نينجا صغير يرفضه أهل قريته في البداية، لكنه يسعى بإصرار ليصبح زعيم القرية المعترف به من الجميع.'})},
+  {name:'ون بيس', description:fmtDesc({channel:'قنوات متعددة (دبلجة عربية على أكثر من قناة)', count:'4', category:'أنمي مغامرة وقراصنة', characters:'لوفي: قبطان طاقم قبعة القش يمتلك قدرة جسد المطاط. زورو: مقاتل بثلاثة سيوف قوي الإخلاص. نامي: ملاحة الطاقم الذكية. سانجي: طباخ الطاقم البارع بالقتال بالرجل.', story:'قراصنة يبحرون معاً بحثاً عن كنز أسطوري يدعى "ون بيس" ليصبح قائدهم ملك القراصنة.'})},
+  {name:'ميكي ماوس', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'3', category:'كوميدي عائلي', characters:'ميكي ماوس: فأر مرح متفائل محور القصص. ميني ماوس: صديقة ميكي المقربة. دونالد داك: صديق ميكي سريع الغضب.', story:'فأر كرتوني كلاسيكي يعيش مغامرات يومية بسيطة ومرحة مع أصدقائه.'})},
+  {name:'بينوكيو', description:fmtDesc({channel:'أفلام ونسخ تلفزيونية متعددة', count:'2', category:'فانتازيا كلاسيكية', characters:'بينوكيو: دمية خشبية تحلم أن تصبح طفلاً حقيقياً. جيبيتو: النجار العجوز الذي صنع بينوكيو وتبناه كابن.', story:'دمية خشبية تنبض بالحياة وتخوض مغامرات لتتعلم الصدق وتستحق أن تصبح طفلاً حقيقياً.'})},
+  {name:'الأميرة والضفدع', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'فانتازيا وموسيقي', characters:'تيانا: فتاة طموحة تحلم بامتلاك مطعمها الخاص. الأمير نافين: أمير تحول إلى ضفدع بلعنة سحرية.', story:'فتاة تقبّل ضفدعاً هو في الحقيقة أمير مسحور، فتتحول هي أيضاً لضفدعة وتخوضان مغامرة لفك اللعنة.'})},
+  {name:'سنافر', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'3', category:'كوميدي وفانتازيا', characters:'الزعيم الأحمر: قائد قرية السنافر الحكيم. السنفورة: السنفورة الوحيدة الأنثى بالقرية. غرغامel: الساحر الشرير الذي يطارد السنافر.', story:'مخلوقات زرقاء صغيرة تعيش بقرية هادئة بالغابة وتواجه باستمرار مطاردة ساحر شرير يريد الإمساك بها.'})},
+  {name:'بامبي', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'3', category:'دراما عائلية', characters:'بامبي: غزال صغير يكبر بالغابة. تمبر: أرنب صديق بامبي المرح. فلاور: ظربان خجول صديق بامبي.', story:'غزال صغير يكبر في الغابة بين الفصول الأربعة ويتعلم دروساً عن الحياة والصداقة والخسارة.'})},
+  {name:'روبن هود', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'مغامرة كلاسيكية', characters:'روبن هود: ثعلب بطل يسرق من الأغنياء ليعطي الفقراء. القس تاك: صديق روبن الداعم من الحيوانات.', story:'بطل مقنّع يسرق من الحكام الظالمين الأغنياء ليوزع المال على الفقراء المحتاجين.'})},
+  {name:'علاء الدين', description:fmtDesc({channel:'فيلم سينمائي ونسخ تلفزيونية', count:'3', category:'فانتازيا من ألف ليلة وليلة', characters:'علاء الدين: شاب فقير يجد مصباحاً سحرياً. الجني: كائن سحري يحقق ثلاث أمنيات لمن يملك المصباح. الأميرة ياسمين: أميرة تقع بحب علاء الدين.', story:'شاب فقير يجد مصباحاً سحرياً بداخله جني يحقق أمنياته فيغيّر حياته بالكامل.'})},
+  {name:'الجميلة النائمة', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'فانتازيا كلاسيكية', characters:'الأميرة أورورا: أميرة تقع تحت لعنة نوم طويل. الأمير فيليب: الأمير الذي ينقذها بقبلة حب.', story:'أميرة تقع تحت لعنة ساحرة شريرة تجعلها تنام نوماً طويلاً حتى تُنقذ بقبلة حب حقيقية.'})},
+  {name:'سندريلا', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'فانتازيا كلاسيكية', characters:'سندريلا: فتاة مظلومة من زوجة أبيها. الأمير: أمير يبحث عن الفتاة صاحبة الحذاء الزجاجي.', story:'فتاة مظلومة تحضر حفلاً ملكياً بمساعدة سحرية وتفقد حذاءها الزجاجي فيبحث عنها الأمير.'})},
+  {name:'ماوكلي فتى الأدغال', description:fmtDesc({channel:'فيلم ونسخ تلفزيونية متعددة', count:'3', category:'مغامرة عائلية', characters:'ماوكلي: طفل بشري نشأ بين الحيوانات بالأدغال. بالو: دب مرح يرعى ماوكلي. باغيرا: فهد أسود حكيم يحمي ماوكلي.', story:'طفل نشأ وسط الأدغال بين الحيوانات ويتعلم قوانين الغابة قبل أن يعود لعالم البشر.'})},
+  {name:'حكايات عالمية', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'يختلف كل حلقة', category:'حكايات وأساطير', characters:'يختلف كل حلقة حسب الحكاية المقدَّمة.', story:'مسلسل يقدم حكايات وأساطير مقتبسة من تراث شعوب مختلفة حول العالم في كل حلقة.'})},
+  {name:'بوباي البحار', description:fmtDesc({channel:'قنوات متعددة حول العالم', count:'3', category:'كوميدي كلاسيكي', characters:'بوباي: بحار يكتسب قوة خارقة بعد أكل السبانخ. أوليف أويل: حبيبة بوباي. بلوتو: خصم بوباي الضخم القوي.', story:'بحار بسيط يكتسب قوة خارقة مؤقتة كلما أكل علبة سبانخ، ويستخدمها لمواجهة خصمه الدائم.'})},
+  {name:'أنت وأنا', description:fmtDesc({channel:'دبلجة/إنتاج عربي لقنوات أطفال', count:'غير مؤكد بدقة', category:'تعليمي اجتماعي', characters:'غير مؤكد بدقة.', story:'مسلسل تعليمي يقدم قيماً ودروساً اجتماعية للأطفال بأسلوب مبسط.'})},
+  {name:'المخلب الأسود', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'2', category:'أنمي أكشن', characters:'البطل المقنّع: يحارب الجريمة بهوية سرية. مساعد البطل: يدعمه بمهماته السرية.', story:'بطل مقنّع يحارب الجريمة والشر بهوية سرية يخفيها عن الجميع.'})},
+  {name:'مغامرات سندباد', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'2', category:'مغامرة من ألف ليلة وليلة', characters:'سندباد: بحار شجاع يخوض رحلات بحرية خطيرة. رفاق سندباد: طاقم السفينة الذي يرافقه بمغامراته.', story:'بحار شجاع يخوض سلسلة رحلات ومغامرات خطيرة في البحار مواجهاً مخلوقات ومخاطر أسطورية.'})},
+  {name:'جزيرة الكنز', description:fmtDesc({channel:'أفلام ونسخ تلفزيونية متعددة', count:'2', category:'مغامرة قراصنة كلاسيكية', characters:'جيم هوكينز: صبي يجد خريطة كنز. الطباخ لونغ جون سيلفر: قرصان غامض مزدوج الولاء.', story:'صبي يجد خريطة كنز ويخوض رحلة بحرية محفوفة بالمخاطر برفقة طاقم من القراصنة.'})},
+  {name:'مغامرات الشجعان الثلاث', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'3', category:'مغامرة وصداقة', characters:'ثلاثة أصدقاء أبطال يشكلون فريق المغامرات الرئيسي.', story:'ثلاثة أصدقاء شجعان يخوضون مغامرات معاً ويتغلبون على التحديات بروح الفريق.'})},
+  {name:'توين توين', description:fmtDesc({channel:'دبلجة عربية على قنوات أطفال متعددة', count:'3', category:'مغامرة وتحقيق', characters:'توين توين (تان تان): مراسل صحفي شاب شجاع. الكلب الوفي: رفيق توين توين الدائم. الكابتن: صديق بحري صاخب الطباع.', story:'مراسل صحفي شاب يخوض مغامرات وتحقيقات حول العالم لكشف ألغاز وقضايا غامضة.'})},
+  {name:'حكاية توي', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'رسوم متحركة ثلاثية الأبعاد', characters:'وودي: لعبة راعي بقر خشبية، اللعبة المفضلة القديمة. باز لايتيير: لعبة رائد فضاء جديدة تنافس وودي.', story:'ألعاب تنبض بالحياة سراً حين يغيب عنها الأطفال، وتخوض مغامرات للحفاظ على مكانتها ووفائها لصاحبها.'})},
+  {name:'شركة المرعبين المحدودة', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'رسوم متحركة كوميدية', characters:'سلي: وحش أزرق ضخم ودود. مايك: وحش صغير بعين واحدة صديق سلي المقرب.', story:'وحوش تعمل بشركة تولّد الطاقة من صرخات خوف الأطفال، حتى تتغير الأمور بعد دخول طفلة بشرية لعالمهم.'})},
+  {name:'اب', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'رسوم متحركة ومغامرة', characters:'كارل: رجل عجوز يشد منزله بآلاف البالونات. راسل: طفل كشاف يرافق كارل بالمصادفة برحلته.', story:'رجل عجوز يربط منزله ببالونات ليطير به نحو مكان أحلامه، فيجد نفسه بمغامرة غير متوقعة برفقة طفل صغير.'})},
+  {name:'مدغشقر', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'4', category:'رسوم متحركة كوميدية', characters:'أليكس: أسد نجم حديقة الحيوان. ماتري: حمار وحشي صديق أليكس المقرب. ميلمان: زرافة قلقة. غلوريا: فرس نهر واثقة من نفسها.', story:'حيوانات حديقة حيوان نيويورك تجد نفسها فجأة بجزيرة مدغشقر البرية وتحاول التأقلم مع الحياة هناك.'})},
+  {name:'شريك', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'3', category:'رسوم متحركة كوميدية', characters:'شريك: غول أخضر يفضل العزلة بمستنقعه. حمار: حمار ثرثار مزعج يرافق شريك. الأميرة فيونا: أميرة تحمل سراً سحرياً خاصاً بها.', story:'غول أخضر يخوض مغامرة غير مرغوبة لإنقاذ أميرة، برفقة حمار ثرثار لا يتوقف عن الكلام.'})},
+  {name:'الديناصور الصغير', description:fmtDesc({channel:'سلسلة أفلام سينمائية', count:'2', category:'مغامرة عائلية', characters:'ليتلفوت: ديناصور صغير يفترق عن عائلته. سيرا: ديناصورة صديقة ليتلفوت برحلته.', story:'ديناصور صغير يفترق عن عائلته ويبحث عنها وسط مخاطر عصور ما قبل التاريخ برفقة أصدقاء جدد.'})},
+  {name:'بيتر بان', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'3', category:'فانتازيا كلاسيكية', characters:'بيتر بان: صبي لا يكبر أبداً يعيش بأرض الأحلام. ويندي: فتاة بشرية يأخذها بيتر لأرض الأحلام. الجرس (تينكربل): حورية صغيرة مخلصة لبيتر.', story:'صبي لا يكبر أبداً يعيش مغامرات في أرض الأحلام برفقة حوريته الصغيرة وأصدقائه.'})},
+  {name:'الأسد الملك', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'3', category:'دراما عائلية موسيقية', characters:'سيمبا: شبل أسد يفقد والده صغيراً. مفاسا: والد سيمبا الملك الحكيم. سكار: عم سيمبا الشرير الطامع بالعرش.', story:'شبل أسد يفقد والده بمؤامرة عمه الشرير، ثم يعود لاحقاً بعد أن يكبر ليستعيد عرش مملكته بحق.'})},
+  {name:'حورية البحر الصغيرة', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'فانتازيا وموسيقي', characters:'أريل: حورية بحر صغيرة تحلم بالعيش على اليابسة. الأمير إريك: أمير بشري تقع أريل بحبه.', story:'حورية بحر صغيرة تحلم بالعيش على اليابسة وتقع بحب أمير بشري، فتضحي بصوتها مقابل ذلك.'})},
+  {name:'الجميلة والوحش', description:fmtDesc({channel:'فيلم سينمائي (وليس مسلسلاً)', count:'2', category:'فانتازيا وموسيقي', characters:'بيل: فتاة محبة للقراءة تُسجن بقصر الوحش. الوحش: أمير مسحور بهيئة وحش مخيف بقلب طيب.', story:'فتاة تُسجن بقصر وحش مسحور، فتكتشف تدريجياً قلبه الطيب خلف مظهره المخيف.'})}
+];
+
+const ANIMAL_PRESETS = [
+  'أسد', 'نمر', 'فيل', 'زرافة', 'حصان', 'تمساح', 'دب', 'ثعلب',
+  'غزال', 'نسر', 'بومة', 'دلفين', 'حوت', 'قرش', 'سلحفاة', 'أرنب',
+  'قرد', 'جمل', 'حمار وحشي', 'طاووس', 'بطريق', 'كنغر', 'باندا',
+  'ذئب', 'ضبع', 'وعل', 'صقر', 'ببغاء', 'فهد', 'خفاش'
+];
+
+const CATEGORY_PRESETS = {
+  'كرتون': CARTOON_PRESETS,
+  'حيوانات': ANIMAL_PRESETS
+};
+
+function getActivePresets(room){
+  const cats = Array.isArray(room.category) ? room.category : [room.category || 'كرتون'];
+  let entries = [];
+  cats.forEach(c=>{ if(CATEGORY_PRESETS[c]) entries = entries.concat(CATEGORY_PRESETS[c]); });
+  const custom = (room.customPresets || []).map(c=> typeof c === 'string' ? {name:c, image:null, description:null, addedBy:null} : c);
+  const customNames = new Set(custom.map(c=>c.name));
+  const seen = new Set();
+  const builtin = [];
+  entries.forEach(e=>{
+    const item = typeof e === 'string' ? {name:e, description:null} : e;
+    if(customNames.has(item.name) || seen.has(item.name)) return;
+    seen.add(item.name);
+    builtin.push({name:item.name, image:null, description:item.description || null, addedBy:null});
+  });
+  return builtin.concat(custom);
+}
+
+function genId(){ return Math.random().toString(36).slice(2,10); }
+
+function genRoomCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for(let i=0;i<5;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+
+function roomKey(code){ return STORAGE_PREFIX + code.toUpperCase(); }
+
+function userKey(username){ return USER_STORAGE_PREFIX + username.trim().toLowerCase(); }
+
+function simpleEncode(pw){ return btoa(unescape(encodeURIComponent(pw))); }
+
+// Storage layer backed by a real Firebase Realtime Database, so rooms/accounts
+// are truly shared across any device or browser (works even as a downloaded file).
+const FIREBASE_DB_URL = 'https://cartoon-game-56f27-default-rtdb.asia-southeast1.firebasedatabase.app';
+let usingFallbackStorage = false;
+const memoryFallbackStore = {};
+
+async function storageGet(key, shared){
+  try{
+    const url = `${FIREBASE_DB_URL}/${encodeURIComponent(key)}.json`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Firebase GET failed: ' + res.status);
+    const data = await res.json();
+    return data === null || data === undefined ? null : data;
+  }catch(e){
+    console.error('storageGet (Firebase) failed, using local fallback', e);
+    usingFallbackStorage = true;
+    const fk = (shared ? 's:' : 'p:') + key;
+    return Object.prototype.hasOwnProperty.call(memoryFallbackStore, fk) ? memoryFallbackStore[fk] : null;
+  }
+}
+
+async function storageSet(key, value, shared){
+  try{
+    const url = `${FIREBASE_DB_URL}/${encodeURIComponent(key)}.json`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(value)
+    });
+    if(!res.ok) throw new Error('Firebase PUT failed: ' + res.status);
+    return true;
+  }catch(e){
+    console.error('storageSet (Firebase) failed, using local fallback', e);
+    usingFallbackStorage = true;
+    const fk = (shared ? 's:' : 'p:') + key;
+    memoryFallbackStore[fk] = value;
+    return true;
+  }
+}
+
+async function loadAccountRecord(username){
+  const raw = await storageGet(userKey(username), true);
+  return raw ? JSON.parse(raw) : null;
+}
+
+async function saveAccountRecord(username, record){
+  return await storageSet(userKey(username), JSON.stringify(record), true);
+}
+
+async function loadRoom(code){
+  const raw = await storageGet(roomKey(code), true);
+  return raw ? JSON.parse(raw) : null;
+}
+
+async function saveRoom(code, newState){
+  newState.updatedAt = Date.now();
+  state = newState;
+  return await storageSet(roomKey(code), JSON.stringify(newState), true);
+}
+
+function newRoomState(firstPlayer, maxPlayers, suggestedCartoon, categories){
+  return {
+    players: [firstPlayer],
+    maxPlayers: maxPlayers,
+    category: (categories && categories.length) ? categories : ['كرتون'],
+    customPresets: [],
+    suggestedCartoon: suggestedCartoon || null,
+    currentUploaderId: firstPlayer.id,
+    phase: 'uploading',
+    image: null,
+    answer: null,
+    guesses: [],
+    round: 1,
+    updatedAt: Date.now()
+  };
+}
+
+async function createRoom(maxPlayers, suggestedCartoon, categories){
+  const errBox = document.getElementById('joinErr');
+  try{
+    let code = genRoomCode();
+    // extremely unlikely collision guard
+    let existing = await loadRoom(code);
+    while(existing){ code = genRoomCode(); existing = await loadRoom(code); }
+    roomCode = code;
+    me = { id: account.id, name: account.username, score: 0 };
+    lastKnownRoomScore = 0;
+    const room = newRoomState(me, maxPlayers, suggestedCartoon, categories);
+    const ok = await saveRoom(roomCode, room);
+    startPolling();
+    render();
+    if(!ok){
+      alert('تنبيه: صار خطأ بحفظ الغرفة على السيرفر، جرب تحدّث الصفحة');
+    }
+  }catch(e){
+    console.error('createRoom error', e);
+    if(errBox){
+      errBox.textContent = 'صار خطأ غير متوقع، حاول مرة ثانية';
+      errBox.style.display = 'block';
+    }
+  }
+}
+
+async function joinRoom(code){
+  const errBox = document.getElementById('joinErr');
+  try{
+    roomCode = code.toUpperCase().trim();
+    const room = await loadRoom(roomCode);
+    if(!room){
+      errBox.textContent = 'ما لقيت غرفة بهذا الكود';
+      errBox.style.display = 'block';
+      roomCode = null;
+      return;
+    }
+    const existing = room.players.find(p=>p.id === account.id);
+    if(existing){
+      me = { id: existing.id, name: existing.name, score: existing.score || 0 };
+      lastKnownRoomScore = existing.score || 0;
+    } else {
+      if(room.maxPlayers && room.players.length >= room.maxPlayers){
+        errBox.textContent = 'الغرفة مكتملة العدد';
+        errBox.style.display = 'block';
+        roomCode = null;
+        return;
+      }
+      me = { id: account.id, name: account.username, score: 0 };
+      lastKnownRoomScore = 0;
+      room.players.push(me);
+    }
+    const ok = await saveRoom(roomCode, room);
+    startPolling();
+    render();
+    if(!ok){
+      alert('تنبيه: صار خطأ بحفظ بياناتك على السيرفر، جرب تحدّث الصفحة');
+    }
+  }catch(e){
+    console.error('joinRoom error', e);
+    if(errBox){
+      errBox.textContent = 'صار خطأ غير متوقع، حاول مرة ثانية';
+      errBox.style.display = 'block';
+    }
+  }
+}
+
+async function syncScoreIfNeeded(){
+  if(!me || !state || !account) return;
+  const p = state.players.find(pl=>pl.id === me.id);
+  if(!p) return;
+  const roomScore = p.score || 0;
+  if(roomScore > lastKnownRoomScore){
+    const delta = roomScore - lastKnownRoomScore;
+    lastKnownRoomScore = roomScore;
+    account.score = (account.score || 0) + delta;
+    await saveAccountRecord(account.username, { id: account.id, score: account.score });
+  } else if(roomScore < lastKnownRoomScore){
+    lastKnownRoomScore = roomScore;
+  }
+}
+
+function startPolling(){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async ()=>{
+    if(!roomCode) return;
+    const fresh = await loadRoom(roomCode);
+    if(fresh && fresh.updatedAt !== (state && state.updatedAt)){
+      if(!state || fresh.round !== state.round){
+        draftCartoonName = null;
+        draftDescription = null;
+        showPresets = false;
+        showCustomInput = false;
+        customImageData = null;
+      }
+      state = fresh;
+      render();
+      syncScoreIfNeeded();
+    }
+    if(state && state.phase === 'reveal' && state.revealAt && (Date.now() - state.revealAt) > 5000){
+      advanceAfterReveal();
+    }
+  }, 2200);
+}
+
+async function advanceAfterReveal(){
+  const fresh2 = await loadRoom(roomCode);
+  if(!fresh2 || fresh2.phase !== 'reveal') return;
+  fresh2.currentUploaderId = fresh2.nextUploaderId;
+  fresh2.phase = 'uploading';
+  fresh2.image = null;
+  fresh2.answer = null;
+  fresh2.description = null;
+  fresh2.revealName = null;
+  fresh2.revealImage = null;
+  fresh2.revealWinnerName = null;
+  fresh2.revealAt = null;
+  fresh2.nextUploaderId = null;
+  fresh2.round = fresh2.round + 1;
+  fresh2.guesses = [];
+  await saveRoom(roomCode, fresh2);
+  render();
+}
+
+function leaveRoom(){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = null;
+  me = null; roomCode = null; state = null; uploadedImageData = null;
+  draftCartoonName = null; showPresets = false; showCustomInput = false; customImageData = null; draftDescription = null;
+  render();
+}
+
+function resizeImage(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxDim = 640;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = h*(maxDim/w); w = maxDim; }
+        else if(h > maxDim){ w = w*(maxDim/h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFileSelect(input){
+  const file = input.files[0];
+  if(!file) return;
+  try{
+    uploadedImageData = await resizeImage(file);
+    render();
+  }catch(e){
+    alert('صار خطأ بمعالجة الصورة');
+  }
+}
+
+async function submitUpload(){
+  const answer = draftCartoonName ? draftCartoonName.trim() : '';
+  if(!answer) return;
+  const fresh = await loadRoom(roomCode);
+  fresh.image = uploadedImageData || null;
+  fresh.answer = answer;
+  fresh.description = draftDescription || null;
+  fresh.phase = 'guessing';
+  fresh.guesses = [];
+  const imgToPersist = uploadedImageData;
+  if(imgToPersist){
+    fresh.customPresets = fresh.customPresets || [];
+    const idx = fresh.customPresets.findIndex(p=>p.name === answer);
+    if(idx >= 0){
+      fresh.customPresets[idx].image = imgToPersist;
+      if(!fresh.customPresets[idx].addedBy) fresh.customPresets[idx].addedBy = me.id;
+    } else {
+      fresh.customPresets.push({ name: answer, image: imgToPersist, description: draftDescription || null, addedBy: me.id });
+    }
+  }
+  uploadedImageData = null;
+  draftCartoonName = null;
+  draftDescription = null;
+  showPresets = false;
+  showCustomInput = false;
+  customImageData = null;
+  await saveRoom(roomCode, fresh);
+  render();
+  // verify the image write actually landed; if not, retry once
+  if(imgToPersist){
+    try{
+      const check = await loadRoom(roomCode);
+      const savedEntry = (check.customPresets || []).find(p=>p.name === answer);
+      if(!savedEntry || savedEntry.image !== imgToPersist){
+        console.warn('image persist verification failed, retrying save');
+        check.customPresets = check.customPresets || [];
+        const idx2 = check.customPresets.findIndex(p=>p.name === answer);
+        if(idx2 >= 0){ check.customPresets[idx2].image = imgToPersist; }
+        else { check.customPresets.push({ name: answer, image: imgToPersist, description: fresh.description, addedBy: me.id }); }
+        await saveRoom(roomCode, check);
+      }
+    }catch(e){ console.error('image persist verification error', e); }
+  }
+}
+
+async function submitGuess(){
+  const input = document.getElementById('guessInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const fresh = await loadRoom(roomCode);
+  const idx = fresh.guesses.findIndex(g=>g.playerId === me.id);
+  const entry = { playerId: me.id, name: me.name, text, verdict: 'pending' };
+  if(idx >= 0) fresh.guesses[idx] = entry; else fresh.guesses.push(entry);
+  await saveRoom(roomCode, fresh);
+  input.value = '';
+  render();
+}
+
+async function judgeGuess(playerId, verdict){
+  const fresh = await loadRoom(roomCode);
+  const g = fresh.guesses.find(x=>x.playerId === playerId);
+  if(!g) return;
+  g.verdict = verdict;
+  if(verdict === 'correct'){
+    const p = fresh.players.find(pl=>pl.id === playerId);
+    if(p) p.score = (p.score || 0) + 1;
+    fresh.phase = 'reveal';
+    fresh.revealName = fresh.answer;
+    fresh.revealImage = fresh.image;
+    fresh.revealWinnerName = p ? p.name : '';
+    fresh.revealAt = Date.now();
+    fresh.nextUploaderId = playerId;
+    await saveRoom(roomCode, fresh);
+    render();
+    setTimeout(()=>{ advanceAfterReveal(); }, 4000);
+    return;
+  }
+  await saveRoom(roomCode, fresh);
+  render();
+}
+
+function esc(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function render(){
+  const app = document.getElementById('app');
+
+  if(!account){
+    app.innerHTML = `
+      <h1 class="logo">خمّن ال<span>كرتون</span> 🎨</h1>
+      <div class="tagline">لعبة جماعية أونلاين لحزر الكراتين</div>
+      <div class="panel tilt">
+        <label>اسم المستخدم</label>
+        <input type="text" id="authUsername" placeholder="مثال: سلطان">
+        <label>كلمة السر</label>
+        <input type="password" id="authPassword" placeholder="كلمة السر">
+        <div class="error-msg" id="authErr" style="display:none;"></div>
+        <button class="btn" onclick="onAuthSubmit()">دخول / إنشاء حساب</button>
+      </div>
+    `;
+    return;
+  }
+
+  if(!me || !roomCode || !state){
+    const createActive = entryMode === 'create';
+    let optionsHtml = '';
+    if(createActive){
+      let opts = '';
+      for(let n=3; n<=10; n++){
+        opts += `<option value="${n}" ${n===3?'selected':''}>${n} لاعبين</option>`;
+      }
+      optionsHtml = `
+        <label>عدد اللاعبين</label>
+        <select id="maxPlayersInput">${opts}</select>
+        <button class="btn" onclick="onCreateClick()">أنشئ الغرفة</button>
+      `;
+    } else {
+      optionsHtml = `
+        <label>كود الغرفة</label>
+        <input type="text" id="codeInput" placeholder="مثال: TOON1" style="text-transform:uppercase">
+        <button class="btn" onclick="onJoinClick()">ادخل الغرفة</button>
+      `;
+    }
+    app.innerHTML = `
+      <h1 class="logo">خمّن ال<span>كرتون</span> 🎨</h1>
+      <div class="tagline">لعبة جماعية أونلاين لحزر الكراتين</div>
+      <div class="center" style="margin-bottom:14px; font-weight:700;">
+        👋 مرحبا ${esc(account.username)}
+      </div>
+      <div class="row" style="margin-bottom:16px;">
+        <button type="button" class="btn blue small" style="width:auto; flex:1;" onclick="toggleProfile()">👤 الملف الشخصي</button>
+        <button type="button" class="btn red small" style="width:auto; flex:1;" onclick="logout()">🚪 تسجيل خروج</button>
+      </div>
+      ${showProfile ? `
+        <div class="panel center">
+          <div style="font-weight:700; margin-bottom:6px;">اسم المستخدم: ${esc(account.username)}</div>
+          <div class="code-badge" style="background:var(--pop-green);">عدد مرات الفوز: ${account.score || 0}</div>
+        </div>
+      ` : ''}
+      <div class="tabs">
+        <div class="tab-btn ${createActive?'active':''}" onclick="setEntryMode('create')">➕ إنشاء غرفة</div>
+        <div class="tab-btn ${!createActive?'active':''}" onclick="setEntryMode('join')">🚪 الانضمام لغرفة</div>
+      </div>
+      <div class="panel tilt">
+        ${optionsHtml}
+        <div class="error-msg" id="joinErr" style="display:none;"></div>
+      </div>
+    `;
+    return;
+  }
+
+  const isUploader = state.currentUploaderId === me.id;
+  const uploaderPlayer = state.players.find(p=>p.id === state.currentUploaderId);
+
+  let playersHtml = state.players.map(p=>{
+    let cls = 'chip';
+    if(p.id === me.id) cls += ' me';
+    if(p.id === state.currentUploaderId) cls += ' uploader';
+    return `<div class="${cls}">${esc(p.name)} <b>🏆${p.score || 0}</b></div>`;
+  }).join('');
+
+  let body = '';
+
+  if(state.phase === 'reveal'){
+    body = `
+      <div class="panel center">
+        <div class="burst">🎉 ${esc(state.revealWinnerName)} جاوب صح!</div>
+        ${state.revealImage ? `<div class="game-img-wrap"><img src="${state.revealImage}"></div>` : ''}
+        <div class="code-badge" style="background:var(--pop-green); margin-top:10px;">${esc(state.revealName)}</div>
+      </div>
+    `;
+  } else if(state.phase === 'uploading'){
+    if(isUploader){
+      body = `
+        <div class="panel">
+          <div class="center" style="margin-bottom:10px;">
+            <span class="badge-tag">دورك ترفع كرتون 🎬 — الجولة ${state.round}</span>
+          </div>
+          <label>اسم الكرتون (الحل)</label>
+          ${(()=>{
+            const currentName = draftCartoonName !== null ? draftCartoonName : (state.round === 1 && state.suggestedCartoon ? state.suggestedCartoon : null);
+            if(currentName && draftCartoonName === null) draftCartoonName = currentName;
+            return `<div class="center" style="margin-bottom:14px;">
+              ${currentName ? `<span class="badge-tag" style="font-size:0.8rem; font-weight:800; padding:6px 12px; border-radius:20px; background:var(--pop-green); color:#fff; border:2.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink); display:inline-block; vertical-align:middle;">✓ ${esc(currentName)}</span> <button type="button" class="btn red small" style="width:auto; padding:6px 12px; font-size:0.8rem; vertical-align:middle;" onclick="cancelCartoonPick()">✕ إلغاء الاختيار</button>` : `<span class="badge-tag" style="font-size:0.85rem; color:#999;">ما اخترت كرتون بعد</span>`}
+            </div>`;
+          })()}
+          <button type="button" class="btn blue small" onclick="togglePresets()" style="width:auto; margin-bottom:12px;">🎬 اختر من كراتين جاهزة</button>
+          ${showPresets ? `
+            <span class="badge-tag" style="margin-right:8px; background:var(--pop-blue); color:#fff; border-color:var(--ink);">📋 ${getActivePresets(state).length} كرتون</span>
+            <input type="text" id="presetSearchInput" placeholder="ابحث عن اسم الكرتون..." oninput="filterPresetChips(this.value)" style="margin-bottom:10px;">
+            <div class="cartoon-picks">
+              ${getActivePresets(state).map(p=>`
+                <div class="cartoon-chip preset-chip-item" data-name="${esc(p.name)}" style="display:none; position:relative; ${p.image ? 'padding:4px 10px 4px 4px;' : ''}" onclick="pickCartoonPreset('${p.name.replace(/'/g,"\\'")}')">
+                  ${p.image ? `<img src="${p.image}" style="width:24px;height:24px;border-radius:6px;object-fit:cover;vertical-align:middle;margin-left:6px;">` : ''}${esc(p.name)}${p.addedBy === me.id ? `<span onclick="event.stopPropagation(); deleteCustomPreset('${p.name.replace(/'/g,"\\'")}')" style="margin-right:6px; color:var(--pop-red); font-weight:900;">×</span>` : ''}
+                </div>
+              `).join('')}
+              <div class="cartoon-chip add-chip" onclick="toggleCustomInput()">➕ كرتون من عندي</div>
+            </div>
+            ${showCustomInput ? `
+              <div class="file-drop ${customImageData ? 'has-img' : ''}" style="margin-bottom:10px;" onclick="document.getElementById('customImageFileInput').click()">
+                ${customImageData ? `<img src="${customImageData}">` : '📷 اضغط لرفع صورة الكرتون (اختياري)'}
+              </div>
+              <input type="file" id="customImageFileInput" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;" onchange="handleCustomFileSelect(this)">
+              <div class="row" style="margin-bottom:10px;">
+                <input type="text" id="customCartoonInput" placeholder="اكتب اسم الكرتون" style="margin-bottom:0;">
+              </div>
+              <textarea id="customDescInput" rows="5" placeholder="وصف الكرتون (اختياري) — مثال:
+من أي قناة تلفزيونية
+إذا من سبيستون، من أي كوكب
+عدد الشخصيات الرئيسية
+تصنيفه
+مواصفات كل شخصية
+قصة الكرتون بشكل مختصر"></textarea>
+              <button type="button" class="btn green small" style="width:auto; margin-bottom:14px;" onclick="addCustomCartoon()">إضافة</button>
+            ` : ''}
+          ` : ''}
+          ${draftCartoonName ? `
+            <div class="file-drop ${uploadedImageData ? 'has-img' : ''}" onclick="document.getElementById('fileInput').click()">
+              ${uploadedImageData ? `<img src="${uploadedImageData}">` : '📷 اضغط لإضافة صورة (اختياري)'}
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;" onchange="handleFileSelect(this)">
+            ${uploadedImageData ? `<button type="button" class="btn red small" style="width:auto; margin-bottom:14px;" onclick="cancelImagePick()">✕ إلغاء اختيار الصورة</button>` : ''}
+            ${draftDescription ? `<div class="desc-card">📋 ${esc(draftDescription)}</div>` : ''}
+          ` : ''}
+          <button class="btn green" id="submitUploadBtn" onclick="submitUpload()" ${draftCartoonName && draftCartoonName.trim().length > 0 ? '' : 'disabled'}>انشر السؤال</button>
+        </div>
+      `;
+    } else {
+      body = `
+        <div class="panel">
+          <div class="waiting-msg">⏳ ${esc(uploaderPlayer ? uploaderPlayer.name : '...')}يرفع كرتون جديد الحين...</div>
+        </div>
+      `;
+    }
+  } else if(state.phase === 'guessing'){
+    if(isUploader){
+      const rows = state.guesses.map(g=>{
+        let textCls = 'guess-text';
+        if(g.verdict === 'correct') textCls += ' correct';
+        if(g.verdict === 'wrong') textCls += ' wrong';
+        const btns = g.verdict === 'pending' ? `
+          <div class="verdict-btns">
+            <button class="btn green" onclick="judgeGuess('${g.playerId}','correct')">✓ صح</button>
+            <button class="btn red" onclick="judgeGuess('${g.playerId}','wrong')">✗ خطأ</button>
+          </div>` : `<span class="badge-tag">${g.verdict === 'correct' ? '✓ صح' : '✗ خطأ'}</span>`;
+        return `<div class="guess-item"><span class="${textCls}">${esc(g.name)}: ${esc(g.text)}</span>${btns}</div>`;
+      }).join('') || '<div class="waiting-msg">بانتظار التخمينات...</div>';
+
+      body = `
+        <div class="panel">
+          ${state.image ? `<div class="game-img-wrap"><img src="${state.image}"></div>` : ''}
+          ${state.description ? `<div class="desc-card">📋 ${esc(state.description)}</div>` : ''}
+          <div class="center" style="margin-bottom:10px;">
+            <span class="badge-tag">الحل عندك: ${esc(state.answer)}</span>
+          </div>
+          <hr class="divider">
+          ${rows}
+        </div>
+      `;
+    } else {
+      const myGuess = state.guesses.find(g=>g.playerId === me.id);
+      const rows = state.guesses.map(g=>{
+        let textCls = 'guess-text';
+        if(g.verdict === 'correct') textCls += ' correct';
+        if(g.verdict === 'wrong') textCls += ' wrong';
+        const tag = g.verdict === 'pending' ? '<span class="badge-tag">بالانتظار</span>' : `<span class="badge-tag">${g.verdict === 'correct' ? '✓ صح' : '✗ خطأ'}</span>`;
+        return `<div class="guess-item"><span class="${textCls}">${esc(g.name)}: ${esc(g.text)}</span>${tag}</div>`;
+      }).join('');
+
+      body = `
+        <div class="panel">
+          ${state.image ? `<div class="game-img-wrap"><img src="${state.image}"></div>` : ''}
+          <label>وش اسم الكرتون؟</label>
+          <input type="text" id="guessInput" placeholder="اكتب تخمينك هنا" value="${myGuess ? esc(myGuess.text) : ''}">
+          <button class="btn blue" onclick="submitGuess()">أرسل التخمين</button>
+          ${rows ? `<hr class="divider">${rows}` : ''}
+        </div>
+      `;
+    }
+  }
+
+  app.innerHTML = `
+    <div class="header-wrap">
+      <h1 class="logo">خمّن ال<span>كرتون</span> 🎨</h1>
+      <a class="leave-btn" onclick="leaveRoom()">🚪 خروج</a>
+    </div>
+    ${usingFallbackStorage ? `<div class="error-msg" style="text-align:center; margin-bottom:10px;">⚠️ التخزين المشترك مو شغال بهالمتصفح — الغرفة راح تشتغل بس على جهازك، وما يقدر أحد ثاني ينضم لها من جهاز مختلف.</div>` : ''}
+    <div class="panel tilt center">
+      <div style="margin-bottom:8px;">كود الغرفة</div>
+      <div class="code-badge">${esc(roomCode)}</div>
+      <div style="margin-top:8px; font-weight:700; font-size:0.85rem; color:#666;">${state.players.length} / ${state.maxPlayers || '∞'} لاعبين</div>
+      <div class="players">${playersHtml}</div>
+    </div>
+    ${body}
+  `;
+}
+
+function setEntryMode(mode){
+  entryMode = mode;
+  render();
+}
+
+function togglePresets(){
+  showPresets = !showPresets;
+  showCustomInput = false;
+  render();
+}
+
+function filterPresetChips(query){
+  const q = query.trim();
+  document.querySelectorAll('.preset-chip-item').forEach(el=>{
+    const name = el.getAttribute('data-name') || '';
+    el.style.display = (q.length > 0 && name.includes(q)) ? '' : 'none';
+  });
+}
+
+function toggleCustomInput(){
+  showCustomInput = !showCustomInput;
+  customImageData = null;
+  render();
+}
+
+async function handleCustomFileSelect(input){
+  const file = input.files[0];
+  if(!file) return;
+  try{
+    customImageData = await resizeImage(file);
+    render();
+  }catch(e){
+    alert('صار خطأ بمعالجة الصورة');
+  }
+}
+
+async function addCustomCartoon(){
+  const input = document.getElementById('customCartoonInput');
+  const descInput = document.getElementById('customDescInput');
+  if(!input) return;
+  const name = input.value.trim();
+  if(!name) return;
+  const description = descInput ? descInput.value.trim() : '';
+  const img = customImageData;
+  const fresh = await loadRoom(roomCode);
+  fresh.customPresets = fresh.customPresets || [];
+  const idx = fresh.customPresets.findIndex(p=>p.name === name);
+  if(idx >= 0){
+    if(img) fresh.customPresets[idx].image = img;
+    if(description) fresh.customPresets[idx].description = description;
+  } else {
+    fresh.customPresets.push({ name, image: img || null, description: description || null, addedBy: me.id });
+  }
+  customImageData = null;
+  await saveRoom(roomCode, fresh);
+  const finalEntry = fresh.customPresets.find(p=>p.name === name);
+  pickCartoon(name, finalEntry.image, finalEntry.description);
+  if(img){
+    try{
+      const check = await loadRoom(roomCode);
+      const savedEntry = (check.customPresets || []).find(p=>p.name === name);
+      if(!savedEntry || savedEntry.image !== img){
+        console.warn('image persist verification failed on add, retrying save');
+        check.customPresets = check.customPresets || [];
+        const idx2 = check.customPresets.findIndex(p=>p.name === name);
+        if(idx2 >= 0){ check.customPresets[idx2].image = img; }
+        else { check.customPresets.push({ name, image: img, description: description || null, addedBy: me.id }); }
+        await saveRoom(roomCode, check);
+      }
+    }catch(e){ console.error('image persist verification error', e); }
+  }
+}
+
+function pickCartoonPreset(name){
+  const list = getActivePresets(state);
+  const p = list.find(x=>x.name === name);
+  pickCartoon(name, p ? p.image : null, p ? p.description : null);
+}
+
+async function deleteCustomPreset(name){
+  const fresh = await loadRoom(roomCode);
+  fresh.customPresets = (fresh.customPresets || []).filter(p=>!(p.name === name && p.addedBy === me.id));
+  await saveRoom(roomCode, fresh);
+  render();
+}
+
+function pickCartoon(name, image, description){
+  draftCartoonName = name;
+  if(image){ uploadedImageData = image; }
+  draftDescription = description || null;
+  showPresets = false;
+  render();
+}
+
+function cancelCartoonPick(){
+  draftCartoonName = '';
+  draftDescription = null;
+  showPresets = false;
+  showCustomInput = false;
+  customImageData = null;
+  render();
+}
+
+function cancelImagePick(){
+  uploadedImageData = null;
+  render();
+}
+
+async function onCreateClick(){
+  const maxPlayers = parseInt(document.getElementById('maxPlayersInput').value, 10);
+  await createRoom(maxPlayers, null, ['كرتون']);
+}
+
+async function onJoinClick(){
+  const code = document.getElementById('codeInput').value.trim();
+  const errBox = document.getElementById('joinErr');
+  if(!code){
+    errBox.textContent = 'لازم تدخل كود الغرفة';
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+  await joinRoom(code);
+}
+
+async function onAuthSubmit(){
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errBox = document.getElementById('authErr');
+  if(!username || !password){
+    errBox.textContent = 'لازم تدخل اسم المستخدم وكلمة السر';
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+  try{
+    const record = await loadAccountRecord(username);
+    if(record){
+      if(record.password !== simpleEncode(password)){
+        errBox.textContent = 'كلمة السر غير صحيحة';
+        errBox.style.display = 'block';
+        return;
+      }
+      account = { id: record.id, username: username, score: record.score || 0 };
+    } else {
+      const newRecord = { id: genId(), score: 0, password: simpleEncode(password) };
+      const ok = await saveAccountRecord(username, newRecord);
+      if(!ok){
+        errBox.textContent = 'صار خطأ بإنشاء الحساب، حاول مرة ثانية';
+        errBox.style.display = 'block';
+        return;
+      }
+      account = { id: newRecord.id, username: username, score: 0 };
+    }
+    render();
+  }catch(e){
+    console.error('auth error', e);
+    errBox.textContent = 'صار خطأ غير متوقع، حاول مرة ثانية';
+    errBox.style.display = 'block';
+  }
+}
+
+function toggleProfile(){
+  showProfile = !showProfile;
+  render();
+}
+
+function logout(){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = null;
+  account = null; me = null; roomCode = null; state = null; uploadedImageData = null;
+  draftCartoonName = null; showPresets = false; showCustomInput = false; showProfile = false; customImageData = null; draftDescription = null;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
