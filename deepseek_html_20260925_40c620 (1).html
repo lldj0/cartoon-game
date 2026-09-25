@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عالم الألعاب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #E6473C; --primary-dark: #c0392b; --primary-light: #ff6b5a;
+        --green: #4CAF7D; --green-dark: #3a8a63;
+        --blue: #3D8BD4; --blue-dark: #2d6ba4;
+        --yellow: #FFC93C; --yellow-dark: #d9a52a;
+        --mafia: #5B2C6F; --mafia-dark: #3d1d4a;
+        --bg-gradient: linear-gradient(145deg, #f5f0eb 0%, #e8dfd7 100%);
+        --ink: #1B1B1B;
+        --shadow: 0 20px 60px rgba(0,0,0,0.15);
+        --radius: 30px;
+        --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg-gradient); color: var(--ink); display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; min-height: 100vh; overflow-x: hidden; }
+    .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+    .top-bar-right, .top-bar-left { display: flex; gap: 8px; align-items: center; }
+    .theme-btn { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 1rem; padding: 6px 10px; border: 2px solid var(--ink); border-radius: 30px; cursor: pointer; background: #fff; color: var(--ink); box-shadow: 0 4px 0 var(--ink); transition: var(--transition); line-height: 1; min-width: 38px; }
+    .theme-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+    body.theme-transitioning, body.theme-transitioning * { transition: background-color 0.3s ease, color 0.25s ease, border-color 0.3s ease, box-shadow 0.3s ease !important; }
+    .sound-btn { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border: 2px solid var(--ink); border-radius: 30px; cursor: pointer; background: #fff; color: var(--ink); box-shadow: 0 4px 0 var(--ink); transition: var(--transition); }
+    .sound-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .sound-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+    .logout-btn-top { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 0.8rem; padding: 6px 12px; border: 2px solid var(--ink); border-radius: 30px; cursor: pointer; background: var(--primary); color: #fff; box-shadow: 0 4px 0 var(--primary-dark); transition: var(--transition); display: none; }
+    .logout-btn-top.visible { display: block; }
+    .logout-btn-top:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--primary-dark); }
+    .connection-badge { font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 30px; background: #fff; border: 1.5px solid var(--ink); display: flex; align-items: center; gap: 5px; }
+    .connection-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse-dot 1.5s infinite; }
+    .connection-badge.offline .dot { background: #999; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+    .app { width: 100%; max-width: 480px; }
+    .auth-screen { display: flex; align-items: center; justify-content: center; min-height: 85vh; padding: 10px 0; position: relative; animation: fadeInUp 0.45s ease; }
+    .auth-screen::before, .auth-screen::after { content: ''; position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.30; pointer-events: none; z-index: 0; }
+    .auth-screen::before { width: 250px; height: 250px; background: var(--primary); top: -70px; right: -80px; animation: blobFloat 9s ease-in-out infinite; }
+    .auth-screen::after { width: 290px; height: 290px; background: var(--blue); bottom: -90px; left: -100px; animation: blobFloat 11s ease-in-out infinite reverse; }
+    @keyframes blobFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-22px, 26px) scale(1.15); } }
+    .auth-card { position: relative; z-index: 1; background: #fff; border-radius: 34px; box-shadow: var(--shadow), 0 0 0 2px var(--ink), 0 10px 0 var(--ink); padding: 26px 24px 22px; width: 100%; max-width: 400px; text-align: center; overflow: hidden; animation: cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes cardPop { from { opacity: 0; transform: scale(0.92) translateY(22px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .auth-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: repeating-linear-gradient(115deg, var(--primary) 0 22px, var(--yellow) 22px 44px, var(--green) 44px 66px, var(--blue) 66px 88px); opacity: 0.9; }
+    .auth-card::after { content: '🎬 🍿 🎮 🕹️'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 3.2rem; opacity: 0.05; white-space: nowrap; pointer-events: none; }
+    .auth-logo { width: 86px; height: 86px; margin: 6px auto 14px; border-radius: 28px; background: linear-gradient(145deg, var(--primary-light), var(--primary)); border: 2px solid var(--ink); box-shadow: 0 8px 0 var(--ink); display: flex; align-items: center; justify-content: center; font-size: 2.6rem; position: relative; animation: float 3.6s ease-in-out infinite; }
+    .auth-logo::after { content: ''; position: absolute; inset: 6px; border-radius: 20px; border: 2px dashed rgba(255,255,255,0.5); }
+    .auth-card .brand { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 2.1rem; margin: 0 0 4px; color: var(--ink); position: relative; line-height: 1.2; }
+    .auth-card .brand span { color: var(--primary); }
+    .auth-card .sub { font-weight: 600; color: #6b625a; margin-bottom: 18px; font-size: 0.92rem; line-height: 1.6; position: relative; }
+    .field { position: relative; margin-bottom: 12px; }
+    .field .f-icon { position: absolute; right: 17px; top: 50%; transform: translateY(-50%); font-size: 1rem; opacity: 0.5; pointer-events: none; transition: var(--transition); z-index: 2; }
+    .field input { width: 100%; padding: 15px 48px 15px 18px; border: 2px solid var(--ink); border-radius: 18px; font-size: 1rem; font-weight: 600; font-family: 'Cairo', sans-serif; background: #f9f6f0; color: var(--ink); text-align: right; transition: var(--transition); }
+    .field input::placeholder { color: #a89e94; font-weight: 600; }
+    .field input:focus { outline: none; border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(230,71,60,0.13); transform: translateY(-2px); }
+    .field:focus-within .f-icon { opacity: 1; transform: translateY(-50%) scale(1.15); }
+    .btn-auth { position: relative; width: 100%; padding: 16px; border: 2px solid var(--ink); border-radius: 60px; background: linear-gradient(145deg, var(--primary-light), var(--primary)); font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 1.25rem; color: #fff; box-shadow: 0 7px 0 var(--primary-dark); cursor: pointer; transition: var(--transition); margin-top: 8px; overflow: hidden; letter-spacing: 0.3px; }
+    .btn-auth.green-btn { background: linear-gradient(145deg, #5cc48f, var(--green)); box-shadow: 0 7px 0 var(--green-dark); }
+    .btn-auth::after { content: ''; position: absolute; top: 0; left: -130%; width: 55%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); animation: shine 3.5s ease-in-out infinite; }
+    @keyframes shine { 0%, 55% { left: -130%; } 100% { left: 140%; } }
+    .btn-auth:hover { transform: translateY(-2px); }
+    .btn-auth:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+    .btn-auth.green-btn:active { box-shadow: 0 2px 0 var(--green-dark); }
+    .btn-auth:disabled { opacity: 0.6; cursor: not-allowed; }
+    .auth-error, .auth-success { display: flex; align-items: center; gap: 8px; border-radius: 16px; padding: 11px 14px; font-weight: 700; margin-bottom: 12px; font-size: 0.88rem; text-align: right; }
+    .auth-error { background: #FFEAEA; border: 2px solid var(--primary); color: var(--primary-dark); animation: shake 0.4s ease; }
+    .auth-success { background: #EAF6EF; border: 2px solid var(--green); color: var(--green-dark); animation: fadeInUp 0.3s ease; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    .auth-foot { margin-top: 16px; font-size: 0.78rem; font-weight: 700; color: #9a9088; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .store-card { background: #fff; border-radius: var(--radius); padding: 36px 24px 30px; box-shadow: var(--shadow), 0 0 0 2px var(--ink), 0 8px 0 var(--ink); text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
+    .store-card.reveal { animation: revealBox 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes revealBox { 0% { opacity: 0; transform: scale(0.85) translateY(30px); } 60% { opacity: 1; transform: scale(1.02) translateY(-5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    .store-card .game-icon { font-size: 5.5rem; display: block; margin-bottom: 6px; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .store-card h2 { font-family: 'Baloo 2', sans-serif; font-size: 2.8rem; margin: 0; }
+    .store-card .desc { font-weight: 700; color: #555; margin: 8px 0 12px; font-size: 1.1rem; }
+    .store-card .stats { display: flex; justify-content: center; gap: 20px; margin: 16px 0 20px; font-size: 0.85rem; color: #777; }
+    .store-card .stats span { background: var(--bg-gradient); padding: 4px 14px; border-radius: 50px; border: 2px solid var(--ink); font-weight: 700; box-shadow: 0 3px 0 var(--ink); }
+    .btn-play { font-size: 2rem; padding: 16px 40px; display: inline-block; background: var(--green); color: #fff; border: 2px solid var(--ink); box-shadow: 0 8px 0 var(--green-dark); border-radius: 60px; cursor: pointer; font-family: 'Baloo 2', sans-serif; font-weight: 700; transition: var(--transition); }
+    .btn-play:hover { transform: translateY(-2px); box-shadow: 0 10px 0 var(--green-dark); }
+    .btn-play:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--green-dark); }
+    .btn-play.mafia-btn { background: var(--mafia); box-shadow: 0 8px 0 var(--mafia-dark); }
+    .btn-play.mafia-btn:hover { box-shadow: 0 10px 0 var(--mafia-dark); }
+    .btn-play.mafia-btn:active { box-shadow: 0 2px 0 var(--mafia-dark); }
+    .clickable-hero { cursor: pointer; transition: var(--transition); user-select: none; }
+    .clickable-hero:hover { transform: translateY(-3px); box-shadow: 0 12px 0 var(--ink) !important; }
+    .clickable-hero:active { transform: translateY(2px); box-shadow: 0 4px 0 var(--ink) !important; }
+    .hero-hint { display: inline-block; margin-top: 14px; background: rgba(255,255,255,0.25); border: 2px dashed rgba(255,255,255,0.6); border-radius: 30px; padding: 6px 18px; font-size: 0.85rem; font-weight: 700; color: #fff; animation: hintPulse 2s ease-in-out infinite; transition: var(--transition); }
+    @keyframes hintPulse { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.05); opacity: 1; } }
+    .auth-hero { background: var(--primary); border: 2px solid var(--ink); border-radius: 24px; padding: 24px 20px; text-align: center; box-shadow: 0 8px 0 var(--ink); margin-bottom: 20px; position: relative; overflow: hidden; color: #fff; animation: fadeInUp 0.4s ease; }
+    .auth-hero::before { content: "📺 ✨ 🍿"; position: absolute; top: -12px; right: -8px; font-size: 3.8rem; opacity: 0.2; }
+    .auth-hero.mafia-hero { background: var(--mafia); }
+    .auth-hero.mafia-hero::before { content: "🕵️ 🌙 🔪"; }
+    h1.logo { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 2.8rem; margin: 0; text-shadow: 4px 4px 0 rgba(0,0,0,0.15); color: #fff; }
+    h1.logo span { color: var(--yellow); }
+    h1.logo .mafia-span { color: #E8B4F0; }
+    .tagline { font-weight: 700; color: #fff; font-size: 1rem; margin: 4px 0 0; opacity: 0.9; }
+    .welcome-banner { text-align: center; font-weight: 700; font-size: 1.1rem; margin-bottom: 16px; background: #fff; border: 2px solid var(--ink); border-radius: 50px; padding: 10px 16px; box-shadow: 0 4px 0 var(--ink); animation: fadeInUp 0.4s ease; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; animation: fadeInUp 0.5s ease; }
+    .menu-box-btn { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 1.05rem; padding: 16px 10px; border: 2px solid var(--ink); border-radius: 18px; cursor: pointer; background: #fff; color: var(--ink); box-shadow: 0 6px 0 var(--ink); transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 6px; position: relative; overflow: hidden; }
+    .menu-box-btn::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 70%); opacity: 0; transition: opacity 0.3s; }
+    .menu-box-btn:hover::before { opacity: 1; }
+    .menu-box-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+    .menu-box-btn.red { background: var(--primary); color: #fff; box-shadow: 0 6px 0 var(--primary-dark); }
+    .menu-box-btn.red:active { box-shadow: 0 2px 0 var(--primary-dark); }
+    .menu-box-btn.blue { background: var(--blue); color: #fff; box-shadow: 0 6px 0 var(--blue-dark); }
+    .menu-box-btn.blue:active { box-shadow: 0 2px 0 var(--blue-dark); }
+    .panel { background: #fff; border: 2px solid var(--ink); border-radius: 24px; box-shadow: 0 8px 0 var(--ink); padding: 22px 18px; margin-bottom: 18px; animation: fadeInUp 0.5s ease; }
+    .panel.center { text-align: center; }
+    label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; text-align: right; }
+    input[type="text"], input[type="password"], textarea, select { width: 100%; font-family: 'Cairo', sans-serif; font-size: 1rem; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 16px; margin-bottom: 14px; background: #f9f6f0; transition: var(--transition); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(230,71,60,0.15); }
+    textarea { resize: vertical; min-height: 80px; }
+    .btn { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 1.2rem; padding: 14px 22px; border: 2px solid var(--ink); border-radius: 60px; cursor: pointer; background: var(--primary); color: #fff; box-shadow: 0 6px 0 var(--primary-dark); transition: var(--transition); width: 100%; text-align: center; position: relative; overflow: hidden; }
+    .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .btn.green { background: var(--green); box-shadow: 0 6px 0 var(--green-dark); }
+    .btn.green:active { box-shadow: 0 2px 0 var(--green-dark); }
+    .btn.blue { background: var(--blue); box-shadow: 0 6px 0 var(--blue-dark); }
+    .btn.blue:active { box-shadow: 0 2px 0 var(--blue-dark); }
+    .btn.yellow { background: var(--yellow); color: var(--ink); box-shadow: 0 6px 0 var(--yellow-dark); }
+    .btn.yellow:active { box-shadow: 0 2px 0 var(--yellow-dark); }
+    .btn.red { background: var(--primary); box-shadow: 0 6px 0 var(--primary-dark); }
+    .btn.mafia { background: var(--mafia); box-shadow: 0 6px 0 var(--mafia-dark); }
+    .btn.mafia:active { box-shadow: 0 2px 0 var(--mafia-dark); }
+    .btn.small { width: auto; font-size: 0.9rem; padding: 8px 18px; border-radius: 40px; box-shadow: 0 4px 0 var(--ink); }
+    .btn.small:active { box-shadow: 0 1px 0 var(--ink); }
+    .btn.undo { background: #9b59b6; color: #fff; box-shadow: 0 4px 0 #6c3483; font-size: 0.8rem; padding: 6px 12px; }
+    .btn.undo:active { box-shadow: 0 1px 0 #6c3483; }
+    .btn.cancel-btn { background: #8a8078; box-shadow: 0 6px 0 #5a524a; }
+    .btn.cancel-btn:active { box-shadow: 0 2px 0 #5a524a; }
+    .btn.disabled-lock { background: #ccc; color: #666; box-shadow: 0 6px 0 #999; cursor: not-allowed; }
+    .btn.disabled-lock:active { transform: none; box-shadow: 0 6px 0 #999; }
+    .code-badge { display: inline-flex; align-items: center; gap: 8px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 1.8rem; letter-spacing: 5px; background: var(--blue); color: #fff; border: 2px solid var(--ink); border-radius: 16px; padding: 6px 20px; box-shadow: 0 6px 0 var(--ink); margin: 8px 0; }
+    .code-badge .copy-icon { font-size: 1rem; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: rgba(255,255,255,0.25); transition: var(--transition); letter-spacing: normal; }
+    .code-badge .copy-icon:hover { background: rgba(255,255,255,0.4); }
+    .code-badge .copy-icon:active { transform: scale(0.9); }
+    .code-badge .copy-icon.copied { background: var(--green); color: #fff; }
+    .players { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; justify-content: center; }
+    .chip { background: #f9f6f0; border: 2px solid var(--ink); border-radius: 30px; padding: 5px 16px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 3px 0 var(--ink); transition: var(--transition); animation: popIn 0.35s ease; }
+    .chip.me { background: var(--yellow); }
+    .chip.owner { border-color: #FFD700; background: #FFD70022; border-style: dashed; }
+    .waiting-notice { background: #FFF4E0; border: 2px dashed var(--yellow-dark); border-radius: 18px; padding: 16px; margin: 14px 0; text-align: center; animation: fadeInUp 0.4s ease; }
+    .waiting-notice .icon { font-size: 2.5rem; display: block; margin-bottom: 8px; animation: float 2.5s ease-in-out infinite; }
+    .waiting-notice .title { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--yellow-dark); margin-bottom: 4px; }
+    .waiting-notice .text { font-weight: 700; font-size: 0.9rem; color: #666; line-height: 1.6; }
+    .player-progress { display: flex; justify-content: center; gap: 8px; margin: 14px 0; }
+    .progress-dot { width: 14px; height: 14px; border-radius: 50%; background: #e0e0e0; border: 2px solid var(--ink); transition: var(--transition); }
+    .progress-dot.filled { background: var(--green); box-shadow: 0 0 0 3px rgba(76,175,125,0.3); }
+    .divider { border: none; border-top: 2px dashed var(--ink); margin: 16px 0; opacity: 0.4; }
+    .game-img-wrap { border: 2px solid var(--ink); border-radius: 18px; overflow: hidden; margin-bottom: 16px; background: #eee; box-shadow: 0 4px 0 var(--ink); animation: zoomIn 0.45s ease; }
+    .game-img-wrap img { width: 100%; display: block; }
+    .file-drop { border: 2px dashed var(--ink); border-radius: 18px; padding: 18px 14px; text-align: center; font-weight: 700; cursor: pointer; background: #f9f6f0; margin-bottom: 14px; box-shadow: 0 4px 0 var(--ink); transition: var(--transition); }
+    .file-drop:hover { background: #efe8db; }
+    .file-drop.has-img { padding: 0; border-style: solid; overflow: hidden; }
+    .file-drop.has-img img { width: 100%; display: block; max-height: 220px; object-fit: cover; }
+    .guess-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f9f6f0; border: 2px solid var(--ink); border-radius: 16px; padding: 10px 16px; margin-bottom: 8px; box-shadow: 0 3px 0 var(--ink); animation: slideInRight 0.35s ease; }
+    .guess-text { font-weight: 700; }
+    .guess-text.wrong { text-decoration: line-through; opacity: 0.5; }
+    .guess-text.correct { color: var(--green); }
+    .verdict-btns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .badge-tag { font-size: 0.7rem; font-weight: 700; padding: 3px 12px; border-radius: 30px; background: #eee; border: 1.5px solid var(--ink); box-shadow: 0 2px 0 var(--ink); }
+    .waiting-msg { text-align: center; font-weight: 700; color: #666; padding: 18px 0; }
+    .waiting-msg .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .cartoon-picks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .cartoon-chip { border: 2px solid var(--ink); border-radius: 30px; padding: 6px 16px; font-weight: 700; font-size: 0.85rem; cursor: pointer; background: #fff; box-shadow: 0 4px 0 var(--ink); transition: var(--transition); }
+    .cartoon-chip:hover { transform: translateY(-2px); }
+    .cartoon-chip:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+    .cartoon-chip.selected { background: var(--yellow); }
+    .desc-card { background: #EAF6EF; border: 2px solid var(--green); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; white-space: pre-wrap; font-size: 0.9rem; line-height: 1.7; box-shadow: 0 4px 0 var(--ink); text-align: right; }
+    .top-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .custom-fields { background: #f9f6f0; padding: 16px; border-radius: 18px; border: 2px solid var(--ink); margin-bottom: 16px; animation: fadeInUp 0.35s ease; position: relative; }
+    .custom-fields label { font-size: 0.85rem; margin-bottom: 4px; }
+    .custom-fields input, .custom-fields textarea { font-size: 0.95rem; padding: 10px 14px; margin-bottom: 10px; }
+    .custom-fields .draft-hint { background: #fff4e0; border: 1.5px dashed var(--yellow-dark); border-radius: 10px; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; color: var(--yellow-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+    .scores-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 8px 0 12px; }
+    .toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
+    .toast { background: #fff; border: 2px solid var(--ink); border-radius: 16px; padding: 12px 18px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 6px 0 var(--ink); animation: slideDown 0.35s ease, fadeOutUp 0.35s ease 2.5s forwards; display: flex; align-items: center; gap: 10px; }
+    .toast.success { background: #EAF6EF; border-color: var(--green); box-shadow: 0 6px 0 var(--green-dark); }
+    .toast.error { background: #FFEAEA; border-color: var(--primary); box-shadow: 0 6px 0 var(--primary-dark); }
+    .toast.info { background: #EAF1FA; border-color: var(--blue); box-shadow: 0 6px 0 var(--blue-dark); }
+    .celebration { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
+    .confetti { position: absolute; width: 10px; height: 10px; background: var(--primary); top: -20px; animation: fall 3s linear forwards; }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    .coming-soon { background: linear-gradient(135deg, #f5e6ff 0%, #e6d4f5 100%); border: 2px dashed var(--mafia); border-radius: 20px; padding: 24px 20px; margin: 16px 0; text-align: center; }
+    .coming-soon .cs-icon { font-size: 4rem; display: block; margin-bottom: 10px; animation: float 2.5s ease-in-out infinite; }
+    .coming-soon h3 { font-family: 'Baloo 2', sans-serif; color: var(--mafia); font-size: 1.6rem; margin: 0 0 8px; }
+    .coming-soon p { font-weight: 700; color: #555; font-size: 0.95rem; line-height: 1.7; }
+    .coming-soon .features { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+    .coming-soon .features span { background: #fff; padding: 6px 14px; border-radius: 30px; border: 2px solid var(--mafia); font-weight: 700; font-size: 0.8rem; color: var(--mafia); box-shadow: 0 3px 0 var(--mafia-dark); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOutUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+    @keyframes celebratePop { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+    .celebration-msg { animation: celebratePop 0.5s ease; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
+    .modal-box { background: #fff; border: 2px solid var(--ink); border-radius: 28px; padding: 28px 24px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 12px 0 var(--ink); animation: popIn 0.3s ease; }
+    .modal-box h3 { font-family: 'Baloo 2', sans-serif; margin-top: 0; color: var(--primary); font-size: 1.8rem; }
+    .modal-box p { font-weight: 700; font-size: 1rem; margin-bottom: 20px; color: #333; white-space: pre-wrap; }
+    body.dark { --bg-gradient: linear-gradient(145deg, #14161a 0%, #1e2128 100%); --ink: #E8E8E8; --shadow: 0 20px 60px rgba(0,0,0,0.6); }
+    body.dark .auth-card, body.dark .store-card, body.dark .panel, body.dark .modal-box, body.dark .toast { background: #23262d; color: #e8e8e8; }
+    body.dark .theme-btn { background: #2a2d34; color: var(--yellow); border-color: #555; box-shadow: 0 4px 0 #111; }
+    body.dark .connection-badge, body.dark .sound-btn { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .sound-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+    body.dark .logout-btn-top { background: var(--primary); color: #fff; }
+    body.dark .toast.success { background: #1e3a2b; border-color: var(--green); }
+    body.dark .toast.error { background: #3a1e1e; border-color: var(--primary); }
+    body.dark .toast.info { background: #1e2a3a; border-color: var(--blue); }
+    body.dark .auth-card .brand { color: #e8e8e8; }
+    body.dark .auth-card .sub { color: #aaa; }
+    body.dark .auth-logo { box-shadow: 0 8px 0 #111; border-color: #555; }
+    body.dark .auth-logo::after { border-color: rgba(255,255,255,0.2); }
+    body.dark .field input { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .field input::placeholder { color: #888; }
+    body.dark .field input:focus { background: #2f333b; border-color: var(--primary); }
+    body.dark .field:focus-within .f-icon { opacity: 0.9; }
+    body.dark .btn-auth { color: #fff; border-color: #555; }
+    body.dark .btn-auth::after { background: linear-gradient(100deg, transparent, rgba(255,255,255,0.15), transparent); }
+    body.dark .welcome-banner { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .menu-box-btn { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .menu-box-btn.red { background: var(--primary); color: #fff; }
+    body.dark .menu-box-btn.blue { background: var(--blue); color: #fff; }
+    body.dark .menu-box-btn::before { background: radial-gradient(circle, rgba(255,255,255,0.06) 10%, transparent 70%); }
+    body.dark input[type="text"], body.dark textarea, body.dark select { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark input::placeholder, body.dark textarea::placeholder { color: #888; }
+    body.dark input:focus, body.dark textarea:focus, body.dark select:focus { background: #2f333b; border-color: var(--primary); }
+    body.dark .chip { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .chip.me { background: var(--yellow); color: #1b1b1b; }
+    body.dark .chip.owner { background: rgba(255,215,0,0.08); }
+    body.dark .guess-item { background: #2a2d34; border-color: #555; }
+    body.dark .guess-text { color: #e8e8e8; }
+    body.dark .badge-tag { background: #333; color: #e8e8e8; border-color: #555; }
+    body.dark .scores-row .chip { background: #2a2d34; }
+    body.dark .desc-card { background: #1e3a2b; border-color: var(--green); color: #d0e8d8; }
+    body.dark .waiting-notice { background: #2a2418; border-color: var(--yellow-dark); }
+    body.dark .waiting-notice .text { color: #bbb; }
+    body.dark .waiting-msg { color: #aaa; }
+    body.dark .waiting-msg .spinner { border-color: #444; border-top-color: var(--primary); }
+    body.dark .cartoon-chip { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+    body.dark .cartoon-chip.selected { background: var(--yellow); color: #1b1b1b; }
+    body.dark .custom-fields { background: #2a2d34; border-color: #555; }
+    body.dark .custom-fields .draft-hint { background: #2a2418; color: var(--yellow); }
+    body.dark .game-img-wrap { background: #1a1a1a; border-color: #555; }
+    body.dark .file-drop { background: #2a2d34; border-color: #555; color: #e8e8e8; }
+    body.dark .file-drop:hover { background: #333; }
+    body.dark .btn { border-color: #555; }
+    body.dark .btn.yellow { color: #1b1b1b; }
+    body.dark .btn.disabled-lock { background: #333; color: #666; box-shadow: 0 6px 0 #111; }
+    body.dark .btn.cancel-btn { background: #555; box-shadow: 0 6px 0 #222; }
+    body.dark .progress-dot { background: #444; border-color: #555; }
+    body.dark .progress-dot.filled { background: var(--green); }
+    body.dark .divider { border-top-color: #555; }
+    body.dark .coming-soon { background: linear-gradient(135deg, #2a1e3a 0%, #1e1528 100%); }
+    body.dark .coming-soon p { color: #bbb; }
+    body.dark .coming-soon .features span { background: #2a2d34; color: #d0a8e8; border-color: var(--mafia); }
+    body.dark .modal-overlay { background: rgba(0,0,0,0.7); }
+    body.dark .modal-box h3 { color: var(--primary-light); }
+    body.dark .modal-box p { color: #ccc; }
+
+    /* ============================================ */
+    /* ============ الدردشة النصية ============ */
+    /* ============================================ */
+    .chat-fab {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #fff;
+        border: 2px solid var(--ink);
+        box-shadow: 0 6px 0 var(--ink);
+        font-size: 1.6rem;
+        cursor: pointer;
+        z-index: 5000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        padding: 0;
+    }
+    .chat-fab.visible { display: flex; }
+    .chat-fab:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+    .chat-fab .chat-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 800;
+        min-width: 22px;
+        height: 22px;
+        border-radius: 11px;
+        padding: 0 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--ink);
+        font-family: 'Baloo 2', sans-serif;
+        animation: popIn 0.3s ease;
+    }
+    .chat-panel {
+        position: fixed;
+        bottom: 92px;
+        right: 24px;
+        width: 340px;
+        max-width: calc(100vw - 32px);
+        max-height: 72vh;
+        background: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 22px;
+        box-shadow: 0 12px 0 var(--ink), 0 20px 40px rgba(0,0,0,0.2);
+        display: none;
+        flex-direction: column;
+        z-index: 5001;
+        overflow: hidden;
+        animation: fadeInUp 0.25s ease;
+    }
+    .chat-panel.visible { display: flex; }
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        background: var(--blue);
+        color: #fff;
+        font-weight: 700;
+        font-family: 'Baloo 2', sans-serif;
+        font-size: 1rem;
+        border-bottom: 2px solid var(--ink);
+    }
+    .chat-header button {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 0 4px;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .chat-header button:hover { opacity: 0.8; }
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-height: 180px;
+        max-height: 420px;
+        background: #f9f6f0;
+    }
+    .chat-msg {
+        background: #fff;
+        border: 1.5px solid var(--ink);
+        border-radius: 14px;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        max-width: 85%;
+        align-self: flex-start;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        box-shadow: 0 2px 0 var(--ink);
+        animation: popIn 0.2s ease;
+    }
+    .chat-msg.me {
+        align-self: flex-end;
+        background: var(--yellow);
+    }
+    .chat-msg .chat-name {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--blue);
+        margin-bottom: 2px;
+    }
+    .chat-msg.system {
+        background: #EAF1FA;
+        color: #666;
+        font-style: italic;
+        align-self: center;
+        font-size: 0.75rem;
+        border-color: var(--blue);
+        box-shadow: none;
+    }
+    .chat-input-row {
+        display: flex;
+        gap: 6px;
+        padding: 8px;
+        background: #fff;
+        border-top: 2px solid var(--ink);
+    }
+    .chat-input-row input {
+        flex: 1;
+        margin: 0 !important;
+        padding: 10px 12px !important;
+        border-radius: 12px !important;
+        font-size: 0.9rem;
+    }
+    .chat-input-row button {
+        padding: 10px 14px;
+        background: var(--blue);
+        color: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: 0 3px 0 var(--blue-dark);
+        transition: var(--transition);
+    }
+    .chat-input-row button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue-dark); }
+    body.dark .chat-panel { background: #23262d; color: #e8e8e8; }
+    body.dark .chat-messages { background: #1a1d22; }
+    body.dark .chat-msg { background: #2a2d34; color: #e8e8e8; border-color: #555; box-shadow: 0 2px 0 #111; }
+    body.dark .chat-msg.me { background: var(--yellow); color: #1b1b1b; }
+    body.dark .chat-msg .chat-name { color: #7db8ff; }
+    body.dark .chat-msg.system { background: #1e2a3a; color: #aaa; border-color: var(--blue); }
+    body.dark .chat-input-row { background: #23262d; }
+    body.dark .chat-input-row input { background: #2a2d34; color: #e8e8e8; border-color: #555; }
+
+    @media (max-width: 420px) {
+        .menu-grid { grid-template-columns: 1fr; }
+        h1.logo { font-size: 2.2rem; }
+        .store-card h2 { font-size: 2.2rem; }
+        .store-card .game-icon { font-size: 4rem; }
+        .btn-play { font-size: 1.6rem; padding: 14px 30px; }
+        .auth-card { padding: 24px 18px 20px; border-radius: 28px; }
+        .auth-card .brand { font-size: 1.85rem; }
+        .auth-logo { width: 74px; height: 74px; font-size: 2.2rem; border-radius: 24px; }
+        .field input { padding: 14px 44px 14px 42px; font-size: 0.95rem; }
+        .btn-auth { font-size: 1.15rem; padding: 15px; }
+        .sound-btn, .logout-btn-top, .theme-btn { font-size: 0.7rem; padding: 5px 10px; }
+        .chat-fab { bottom: 16px; right: 16px; width: 52px; height: 52px; font-size: 1.4rem; }
+        .chat-panel { bottom: 80px; right: 16px; width: calc(100vw - 32px); }
+    }
+    @media (min-width: 600px) {
+        .app, .top-bar { max-width: 600px; }
+        body { padding: 30px 20px; }
+        .panel { padding: 30px 28px; }
+    }
+</style>
+</head>
+<body onload="initApp()">
+
+<div class="top-bar">
+    <div class="top-bar-right">
+        <div class="connection-badge" id="connectionBadge"><span class="dot"></span> <span id="connectionText">متصل</span></div>
+    </div>
+    <div class="top-bar-left">
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+        <button class="theme-btn" id="notifToggleBtn" onclick="toggleNotifications()" title="الإشعارات">🔔</button>
+        <button class="sound-btn active" id="soundToggleBtn" onclick="toggleSound()">🔊</button>
+        <button class="logout-btn-top" id="logoutBtnTop" onclick="logout()">🚪 خروج</button>
+    </div>
+</div>
+
+<div class="app" id="app"></div>
+<div id="modalContainer"></div>
+<div class="toast-container" id="toastContainer"></div>
+<div class="celebration" id="celebrationContainer"></div>
+
+<!-- الدردشة النصية -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" title="الدردشة">
+    💬
+    <span class="chat-badge" id="chatBadge" style="display:none;">0</span>
+</button>
+<div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+        <span>💬 دردشة الغرفة</span>
+        <button onclick="toggleChat()" title="إغلاق">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="اكتب رسالة..." maxlength="200" autocomplete="off"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();event.stopPropagation();sendChat();}">
+        <button onclick="sendChat()" title="إرسال">📤</button>
+    </div>
+</div>
+
+<!-- PeerJS -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<script>
+// ===================================================================
+// ===== الثوابت =====
+// ===================================================================
+const PEER_PREFIX = 'cartoongame-v1-';
+const SOUND_KEY = 'cartoon-sound-enabled';
+const PLAYER_ID_KEY = 'cartoon-player-id';
+const USERNAME_KEY = 'cartoon-username';
+const LAST_ROOM_CODE_KEY = 'cartoon-last-room-code';
+const DRAFT_CUSTOM_KEY = 'cartoon-draft-custom';
+const THEME_KEY = 'cartoon-theme';
+const NOTIF_KEY = 'cartoon-notifications-enabled';
+
+// ===================================================================
+// ===== التخزين =====
+// ===================================================================
+const storage = {
+    getItem(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+    setItem(key, value) { try { localStorage.setItem(key, value); return true; } catch (e) { return false; } },
+    removeItem(key) { try { localStorage.removeItem(key); return true; } catch (e) { return false; } }
+};
+
+// ===================================================================
+// ===== أدوات الأمان =====
+// ===================================================================
+function esc(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escAttr(str) { return esc(str); }
+
+// ===================================================================
+// ===== هوية اللاعب =====
+// ===================================================================
+function getOrCreatePlayerId() {
+    let id = storage.getItem(PLAYER_ID_KEY);
+    if (!id) {
+        id = 'p_' + Math.random().toString(36).substr(2, 9);
+        storage.setItem(PLAYER_ID_KEY, id);
+    }
+    return id;
+}
+
+// ===================================================================
+// ===== البيانات =====
+// ===================================================================
+function fmtDesc(f) {
+    const lines = [];
+    if (f.channel) lines.push('القناة: ' + f.channel);
+    if (f.planet) lines.push('الكوكب: ' + f.planet);
+    if (f.count) lines.push('عدد الشخصيات الرئيسية: ' + f.count);
+    if (f.category) lines.push('التصنيف: ' + f.category);
+    if (f.characters) lines.push('الشخصيات:\n' + f.characters);
+    if (f.story) lines.push('القصة:\n' + f.story);
+    return lines.join('\n');
+}
+
+const CARTOON_PRESETS = [
+    { name: 'المحقق كونان', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '4', category: 'أنمي غموض وتحقيق', characters: '• كونان إيدوجاوا: المتحري الذكي.\n• ران موري: صديقة سينشي المخلصة.\n• توغو موري: المحقق الخاص الفكاهي.\n• الدكتور أغاسا: المخترع الجار.', story: 'طالب الثانوية سينشي كودو يتحول إلى طفل صغير بعد تناوله عقاراً ساماً، فيحاول حل القضايا للوصول إلى المنظمة السوداء.' }) },
+    { name: 'أبطال الديجيتال', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '4', category: 'أنمي خيال علمي ومغامرات', characters: '• أمجد: قائد أبطال الديجيتال وصاحب الشجاعة.\n• يامن: الصديق المخلص والمنافس.\n• أبطال العالم الرقمي وووحوشهم.', story: 'مجموعة من الأطفال ينتقلون إلى العالم الرقمي ليصبحوا أبطالاً يدافعون عنه رفقة مرافقيهم.' }) },
+    { name: 'أبطال التايتنز', description: fmtDesc({ channel: 'Cartoon Network (CN)', count: '5', category: 'أكشن وكوميديا', characters: '• روبن: القائد الجاد والمنظم.\n• ستارفلاير: الفتاة الفضائية اللطيفة.\n• سايبرغ: النصف آلي المحب للمرح.\n• بيست بوي: الفتى القادر على التحول للحيوانات.\n• رايفن: الفتاة الغامضة ذات القوى السحرية.', story: 'فريق من الأبطال الخارقين الشباب يدافعون عن مدينتهم وخوضون مواقف كوميدية يومية.' }) },
+    { name: 'أنا وأخي', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب زمردة', count: '2', category: 'دراما وعائلي', characters: '• سامي: الأخ الأكبر المسؤول والصادق.\n• وسيم: الطفل الصغير اللطيف والمدلل.', story: 'قصة سامي الذي يتحمل مسؤولية رعاية أخيه الصغير وسيم بعد وفاة والدتهم، في مواقف مليئة بالمشاعر والعاطفة.' }) },
+    { name: 'أنت وأنا', description: fmtDesc({ channel: 'براعم', count: '2', category: 'تعليمي للأطفال', characters: '• شخصيات برعومية تتفاعل مع الأطفال.', story: 'برنامج تعليمي تفاعلي يهدف لبناء مهارات الأطفال وتوصيل القيم البسيطة.' }) },
+    { name: 'الأميرة والضفدع', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'فانتازيا ورومانسية', characters: '• تيانا: فتاة طموحة تحلم بافتتاح مطعمها الخاص.\n• الأمير نيفين: أمير مستهتر تحول إلى ضفدع.', story: 'رحلة في أحراش المستنقع لفك لعنة السحر وتحويل الضفدع إلى أمير مجدداً.' }) },
+    { name: 'الأسد الملك', description: fmtDesc({ channel: 'MBC3', count: '3', category: 'دراما ومغامرة', characters: '• سيمبا: وريث عرش أراضي العزة.\n• سكار: العم الشرير الطامع بالسلطة.\n• تيمون وبومبا: الثنائي المرح صاحب شعار هاكونا ماتاتا.', story: 'رحلة الشبل سيمبا للعودة واستعادة ملك أبيه بعد استيلاء عمه سكار عليه.' }) },
+    { name: 'الجميلة النائمة', description: fmtDesc({ channel: 'MBC3', count: '3', category: 'خيال وخرافة', characters: '• شفق (أورورا): الأميرة المسحورة.\n• الأمير فيليب: البطل الشجاع.\n• ماليفسينت: الساحرة الشريرة.', story: 'أميرة تصاب بلعنة تجعلها تنام نوماً عميقاً ولا يستطيع إيقاظها إلا قُبلة الحب الحقيقي.' }) },
+    { name: 'الفتيات الخارقات', description: fmtDesc({ channel: 'Cartoon Network (CN)', count: '3', category: 'أكشن وكوميديا', characters: '• بلوسم: القائدة الذكية والمنظمة.\n• بابلز: الفتاة اللطيفة والمحبة للحيوانات.\n• باتركب: الفتاة القوية والعنيفة.', story: 'ثلاث فتيات صغيرات ذوات قوى خارقة صُنعت بالصدفة لحماية مدينة تاونسفيل من الجريمة.' }) },
+    { name: 'المخلب الأسود', description: fmtDesc({ channel: 'قناة أجيال', count: '2', category: 'مغامرة وإثارة', characters: '• بطل قناع المخلب الأسود.\n• مساعد البطل والمحقق.', story: 'مغامرات تشويقية لبطل مقنع يسعى لنشر العدالة وإحباط مخططات الأشرار.' }) },
+    { name: 'المهرج تيتو', description: fmtDesc({ channel: 'براعم', count: '1', category: 'ترفيهي وكوميدي للأطفال', characters: '• تيتو: مهرج لطيف ومرح يحب نشر البسمة.', story: 'فقرات استعراضية ومواقف طريفة تهدف لتعليم الأطفال وتسلِيتهم بروح مرحة.' }) },
+    { name: 'اب', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'مغامرة ودراما', characters: '• كارل فريدريكسن: العجوز الصارم ذو القلب الطيب.\n• راسل: مستكشف الكشافة النشيط.', story: 'رحلة عجوز لتحقيق حلم زوجته بالطيران ببيته باستخدام آلاف بالونات الهيليوم.' }) },
+    { name: 'باتمان', description: fmtDesc({ channel: 'سبيستون / MBC3', planet: 'كوكب أكشن', count: '3', category: 'أكشن وغموض', characters: '• بروس واين (باتمان): فارس الظلام.\n• ألفرد: الخادم الحكيم والمخلص.\n• الجوكر: الخصم الشرير اللدود.', story: 'حماية مدينة غوثام من المجرمين والأشرار باستخدام المهارات القتالية والتقنيات العالية.' }) },
+    { name: 'بامبي', description: fmtDesc({ channel: 'براعم', count: '2', category: 'طبيعة ومغامرة', characters: '• بامبي: الغزال الصغير أمير الغابة.\n• ثامبر: الأرنب المرح الصديق المقرب.', story: 'نشأة غزال صغير في الطبيعة وتعلّمه الدروس الحياتية وحماية سكان الغابة.' }) },
+    { name: 'بن 10', description: fmtDesc({ channel: 'Cartoon Network (CN)', count: '3', category: 'خيال علمي وأكشن', characters: '• بن تينيسون: الفتى صاحب ساعة الأومنيتريكس.\n• غوين: ابنة عمه الذكية ذات القدرات السحرية.\n• الجد ماكس: الجد الخبير والموجه.', story: 'صبي يكتشف ساعة فضائية تسمح له بالتحول إلى 10 كائنات فضائية مختلفة لحماية العالم.' }) },
+    { name: 'بوباي البحار', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب كوميديا', count: '3', category: 'كوميديا وأكشن', characters: '• بوباي: البحار القوي المعتمد على السبانخ.\n• زيتونة: خطيبة بوباي الدائمة الوقوع في المشاكل.\n• بلوتو: الضخم المشاكس والمنافس.', story: 'مغامرات البحار بوباي واستخدامه لقوة السبانخ للتغلب على بلوتو وإنقاذ زيتونة.' }) },
+    { name: 'بيتر بان', description: fmtDesc({ channel: 'MBC3', count: '3', category: 'فانتازيا ومغامرة', characters: '• بيتر بان: الفتى الذي لا يكبر أبداً.\n• ويندي: الفتاة الحالمة.\n• الكابتن هوك: القرصان المعادي.', story: 'الطيران إلى أرض الأحلام والفضول ومواجهة القراصنة في عالم سحري.' }) },
+    { name: 'توم آند جيري', description: fmtDesc({ channel: 'Cartoon Network (CN)', count: '2', category: 'كوميديا مطاردات', characters: '• توم: القط الذي يسعى للقبض على جيري.\n• جيري: الفأر الذكي سريع البديهة.', story: 'مطاردات كوميدية لا تنتهي بين القط توم والفأر جيري في مشاهد مليئة بالمثارة والضحك.' }) },
+    { name: 'جزيرة الكنز', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '2', category: 'أنمي مغامرة وقراصنة', characters: '• جيم هوكينز: الصبي الجسور الشجاع.\n• جون سيلفر: القرصان ذو الساق الخشبية والشخصية الغامضة.', story: 'رحلة البحث عن كنز القرصان فلنت الأسطوري وسط صراعات الخيانة والشجاعة.' }) },
+    { name: 'حكايات عالمية', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '2', category: 'قصص وحكايات', characters: '• الراوي والشخصيات المتغيرة حسب القصة.', story: 'قصص ومواقف مستوحاة من التراث والأدب العالمي في كل حلقة حكاية جديدة.' }) },
+    { name: 'حكاية توي', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'مغامرة وكوميديا', characters: '• وودي: لعبة راعي البقر المخلص.\n• باز يطير: لعبة رائد الفضاء المتطور.', story: 'عالم خفي تنبض فيه الألعاب بالحياة عند غياب البشر وتخوض مغامرات لحماية بعضهم.' }) },
+    { name: 'حورية البحر الصغيرة', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'فانتازيا بحرية', characters: '• آريل: حورية البحر الشغوفة بعالم البشر.\n• أورسولا: ساحرة الأعماق الشريرة.', story: 'رغبة حورية بحر بالتحول إلى بشرية للعيش على الأرض بعد صفقة مع ساحرة البحر.' }) },
+    { name: 'الخروف شون', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'كوميديا صامتة', characters: '• شون: الخروف الذكي وقائد القطيع.\n• بيتزر: الكلب الحارس الملتزم.', story: 'مواقف مضحكة ومغامرات طريفة يخوضها الخروف شون مع قطيعه في المزرعة بعيداً عن عين المزارع.' }) },
+    { name: 'دراغون بول', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '4', category: 'أنمي أكشن وقتال', characters: '• غوكو: مقاتل السايان الساذج والطفل القوي.\n• فيجيتا: أمير السايان المغرور والمنافس الأول.\n• بولما: المخترعة والذكية صاحبة رادار التنين.\n• بيكولو: المقاتل والمدرب الحكيم.', story: 'رحلة للبحث عن كرات التنين السحرية ومواجهة أشرار الكون لحماية كوكب الأرض.' }) },
+    { name: 'دروب ريمي', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب زمردة', count: '3', category: 'دراما وإنساني', characters: '• ريمي: الفتاة الصبورة ذات الصوت العذب.\n• فيتالي: العم العازف والمربّي.\n• كابي وراموس: الكلاب المخلصة.', story: 'رحلة فتاة يتيمة تجوب البلاد مع فرقة موسيقية جوالة بحثاً عن أمها الحقيقية.' }) },
+    { name: 'الديناصور الصغير', description: fmtDesc({ channel: 'براعم', count: '2', category: 'مغامرة طبيعية', characters: '• ألو: الديناصور الصغير اللطيف.\n• صديقه الصغير من البشر.', story: 'مغامرة في العصور القديمة تظهر قيم الصداقة والتغلب على الخوف.' }) },
+    { name: 'زورو', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '2', category: 'مغامرات وأكشن', characters: '• دييغو (زورو): النبيل المقنع المدافع عن المظلومين.\n• برنارد: الصبي المساعد الكتوَم.', story: 'مغامرات الفارس المقنع زورو في نصرة الضعفاء ومحاربة فساد الحكام.' }) },
+    { name: 'سالي', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب زمردة', count: '3', category: 'دراما وإنساني', characters: '• سالي كرو: الفتاة الصبورة والطيبة.\n• لافي: الصديقة المخلصة والوفية.\n• الآنسة مينشن: مديرة المعهد القاسية.', story: 'تحول حياة الفتاة الغنية سالي إلى خادمة في معهد دراسي بعد وفاة والدها، مواجهة الظروف بصبر وحلم.' }) },
+    { name: 'سبونج بوب', description: fmtDesc({ channel: 'MBC3', count: '4', category: 'كوميديا ومغامرات', characters: '• سبونج بوب: الإسفنجة الصفراء المتفائلة.\n• بسيط: نجم البحر الصديق اللطيف.\n• شفيق: الأخطبوط الغاضب المحب للهدوء.\n• مستر سلطع: صاحب مطعم مقرمشات سلطع الطماع.', story: 'حياة يومية ومغامرات مضحكة في أعماق المحيط بمدينة قاع الهامور.' }) },
+    { name: 'سنافر', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب بون بون', count: '3', category: 'مغامرات وفانتازيا', characters: '• بابا سنفور: الحكيم والقائد للقرية.\n• سنفورة: الفتاة اللطيفة الوحيدة بينهم.\n• شرشبيل: الساحر الشرير الشغوف بالإمساك بهم.', story: 'مخلوقات زرقاء صغيرة تعيش في قرية الفطر وتدافع عن نفسها من ألاعيب الساحر شرشبيل وقطّه أزريل.' }) },
+    { name: 'سندريلا', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب زمردة', count: '3', category: 'دراما وفانتازيا', characters: '• سندريلا: الفتاة الطيبة والصبورة.\n• زوجة الأب: المرأة القاسية والطماعة.\n• الأمير: الباحث عن صاحبة الحذاء الزجاجي.', story: 'معاناة فتاة طيبة مع زوجة أبيها وبناتها قبل أن تتغير حياتها بالكامل في الحفلة الملكية.' }) },
+    { name: 'شركة المرعبين المحدودة', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'كوميديا وفانتازيا', characters: '• شلبي سولوفان (شلبي): المرعب المتميز ذو الفرو الأنيق.\n• مارد وشوشني: الوحش الأخضر الصغير صاحب العين الواحدة.', story: 'شركة تجمع طاقة صراخ الأطفال، حتى تتغير المفاهيم بظهور طفلة صغيرة داخل عالمهم.' }) },
+    { name: 'صقور الأرض', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '3', category: 'أنمي تاريخي وحربي', characters: '• عبد الرحمن (الظاهر): القائد الشجاع والمخلص.\n• حمزة: المقاتل القوي السريع.\n• حكمة: التاجر والحكيم.', story: 'معارك ملحمية تاريخية تسعى لإعادة الأمن والاستقرار وتوحيد البلاد ضد الطغاة.' }) },
+    { name: 'طيش عيال', description: fmtDesc({ channel: 'MBC3', count: '3', category: 'كوميديا محلية', characters: '• مصقوع: الفتى المشاكس ذو الأفكار الغريبة.\n• دحيّم: الصديق الكسول المحب للأكل.\n• سلمان: الفتى العاقل والمتردد.', story: 'مغامرات ومواقف يومية مضحكة تخوضها مجموعة من الأطفال في الحارة السعودية.' }) },
+    { name: 'ظاظا وجرجير', description: fmtDesc({ channel: 'MBC3', count: '2', category: 'كوميديا عرائس', characters: '• ظاظا: الشخصية الفكاهية الحالمة.\n• جرجير: الصديق الذكي والموجه.', story: 'مواقف ومغامرات تعليمية وكوميدية تبث القيم الأخلاقية للأطفال.' }) },
+    { name: 'عالم غمبول المدهش', description: fmtDesc({ channel: 'Cartoon Network (CN)', count: '3', category: 'كوميديا وسريالية', characters: '• غمبول واترسون: القط الأزرق المشاكس.\n• داروين واترسون: السمكة الذهبية والأخ المتبنى.\n• أنايس: الأرنبة الصغيرة العبقرية.', story: 'مغامرات يومية مجنونة في مدينة إلمور تضم عائلة واترسون وأصدقاءهم الغريبين.' }) },
+    { name: 'عدنان ولينا', description: fmtDesc({ channel: 'سبيستون وجيل المستقبل (أجيال)', planet: 'كوكب مغامرات', count: '3', category: 'أنمي مغامرات وخيال علمي', characters: '• عدنان: الصبي القوي الذي يتمتع بمهارات عالية.\n• لينا: الفتاة الرقيقة ذات القدرات الخاصة.\n• عبسي: الصديق الوفي والمرح لعدنان.', story: 'مغامرة عبر العالم المستقبلي المحطم للبحث عن الأمل وحماية لينا من طمع القوى الشريرة.' }) },
+    { name: 'عهد الأصدقاء', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب زمردة', count: '2', category: 'دراما وصداقة', characters: '• روميو: الفتى الطيب ذو القلب النقي.\n• ألفريدو: الفتى العبقري والقائد الملهم منظف المداخن.', story: 'قصة صبيين يعملان في تنظيف المداخن بمدينة ميلانو ويؤسسان عهد الأصدقاء لمواجهة العصابات والعقبات.' }) },
+    { name: 'غرندايزر', description: fmtDesc({ channel: 'سبيستون والقناة السعودية الأولى (أجيال)', planet: 'كوكب أكشن', count: '3', category: 'أنمي خيال علمي وروبوتات', characters: '• دوق فليد (دايسكي): بطل الكوكب والمدافع عنه.\n• كوجي كابوتو: الطيار المساعد والشجاع.\n• الدكتور آمون: العالم المشرف على حماية الأرض.', story: 'يدافع دوق فليد عن كوكب الأرض باستخدام الروبوت العملاق غرندايزر ضد قوات فيغا الشريرة.' }) },
+    { name: 'فلونة', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '3', category: 'أنمي مغامرات وطبيعة', characters: '• فلونة: الفتاة الجريئة والمحبة للمغامرة.\n• الدكتور إرنست: الأب الحكيم والطبيب.\n• فرانس وجاك: الإخوة الصغار.', story: 'تحطم سفينة عائلة روبنسون وعيشهم على متن جزيرة مهجورة والتأقلم مع الطبيعة.' }) },
+    { name: 'القناص', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '4', category: 'أنمي مغامرات وأكشن', characters: '• غون فريكس: الفتى الطموح الباحث عن أبيه.\n• كيلوا زولديك: الفتى القاتل المحترف والصديق المخلص.\n• كورابيكا: الباحث عن الانتقام لقبيلته.\n• ليوريو: الطامح للطب.', story: 'رحلة غون باجتياز اختبار القناصين الشاق والتعرف على أصدقاء مواجهين للأخطار في عالم واسع.' }) },
+    { name: 'قرية التوت', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب بون بون', count: '2', category: 'فانتازيا للأطفال', characters: '• راوي القرية والأقزام الصغار.', story: 'حياة الأقزام في قرية التوت السحرية وتكاتفهم لجمع التوت ومساعدة بعضهم البعض.' }) },
+    { name: 'كابتن ماجد', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب رياضة', count: '3', category: 'أنمي رياضي', characters: '• ماجد كامل: الموهبة الفذة في كرة القدم.\n• بسام: المهاجم القوي وصاحب التسديدات الحارقة.\n• وليد: حارس المرمى العملاق والأمين.', story: 'طريق الفتى ماجد للوصول إلى الاحتراف العالمي في كرة القدم رفقة أصدقائه ومنافسيه.' }) },
+    { name: 'ماوكلي فتى الأدغال', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '3', category: 'أنمي مغامرات', characters: '• ماوكلي: الطفل الذي نشأ مع الذئاب.\n• بالو: الدب المربّي الصديق.\n• بغيرة: الفهد الحارس الحكيم.', story: 'نشأة طفل إنساني في غابات الهند مع الحيوانات ومواجهته للنمر الشرير شريخان.' }) },
+    { name: 'مغامرات سندباد', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب مغامرات', count: '3', category: 'أنمي مغامرات أسطورية', characters: '• سندباد: التاجر والبحار الشجاع.\n• ياسمينة: الطائر المسحور والصديقة.\n• علي بابا: المغامر الصديق.', story: 'رحلات بحرية مليئة بالسحر والمخاطر والمخلوقات العجيبة في الشرق القديم.' }) },
+    { name: 'مغامرات الشجعان الثلاثة', description: fmtDesc({ channel: 'قناة أجيال', count: '3', category: 'مغامرات تاريخية', characters: '• الأبطال الثلاثة المخلصون للوطن.', story: 'معارك ومغامرات شجاعة تخوضها المجموعة لحماية المملكة من الأعداء.' }) },
+    { name: 'ميكي ماوس', description: fmtDesc({ channel: 'MBC3', count: '3', category: 'كوميدي مغامرات', characters: '• ميكي: الفأر الذكي والمتفائل.\n• بندق: الصديق الطيب والمغفل.\n• بطوط: البطوط سريع الغضب والانفعال.', story: 'مغامرات مضحكة تجمع بين ميكي وأصدقائه في أوقاتهم اليومية المختلفة.' }) },
+    { name: 'ناروتو', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '3', category: 'أنمي نينجا وأكشن', characters: '• ناروتو أوزوماكي: النينجا الطموح الحالم برتبة الهوكاجي.\n• ساسكي أوتشيها: عبقري العشيرة الباحث عن الانتقام.\n• ساكورا هارونو: نينجا طبية متميزة.', story: 'رحلة ناروتو لتحقيق اعتراف أهل قريته به ليصبح الهوكاجي والقائد القادم للقرية.' }) },
+    { name: 'هزيم الرعد', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب أكشن', count: '3', category: 'أنمي فضائي وحربي', characters: '• هزيم الرعد: القائد الشاب الجسور.\n• روجو: المنافس المقاتل.\n• ران هو: المخططة الذكية.', story: 'حروب وصراعات بين مجرات الفضاء لتوحيد المجرة وإقرار السلام والأمان.' }) },
+    { name: 'هامتارو', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب بون بون', count: '3', category: 'مغامرات لطيفة', characters: '• هامتارو: الهامستر الصغير الفضولي.\n• لورا: صاحبة هامتارو اللطيفة.\n• كوشو: قائد الهامسترات.', story: 'مغامرات هامستر صغير وأصدقائه الهامسترات في الاجتماع السري والاستكشاف عند غياب أصحابهم.' }) },
+    { name: 'وادي الأمان', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب بون بون', count: '3', category: 'فانتازيا وهادئ', characters: '• أمان: الصبي الطيب والفضولي.\n• مي الصغيرة: الفتاة المشاكسة.\n• سنيف: الصديق الخائف.', story: 'قصص دافئة ولطيفة عن سكان وادي الأمان وعيشهم بسلام واستكشاف الطبيعة.' }) },
+    { name: 'يوغي يو', description: fmtDesc({ channel: 'سبيستون / MBC3', planet: 'كوكب أكشن', count: '3', category: 'أنمي ألعاب وبطاقات', characters: '• يوغي موتو: الفتى الخجول حامل الأحجية الألفية.\n• يامي يوغي: الفرعون القديم الشجاع.\n• جوي ويلر: الصديق المخلص واللاعب الشغوف.', story: 'مبارزات وحوش البطاقات وحل أسرار الأدوات الألفية الفرعونية القديمة لحماية العالم.' }) },
+    { name: 'ينبوع الأحلام', description: fmtDesc({ channel: 'سبيستون', planet: 'كوكب كوميديا', count: '3', category: 'أنمي كوميدي وقتالي', characters: '• نور (رانما): الفتى القتالي المتحول لفتاة عند الماء البارد.\n• ريم: الفتاة الشجاعة ولاعبة القتال.\n• بهاء: الأب الفكاهي.', story: 'صراعات ومواقف كوميدية ناتجة عن السقوط في ينابيع سحرية تحول الأشخاص عند ملامسة الماء.' }) }
+];
+
+function getAllCartoons() { return [...CARTOON_PRESETS, ...loadCustomCartoons()]; }
+function loadCustomCartoons() {
+    try { const raw = storage.getItem('cartoon-custom-list'); return raw ? JSON.parse(raw) : []; } catch (e) { return []; }
+}
+function saveCustomCartoons(list) { return storage.setItem('cartoon-custom-list', JSON.stringify(list)); }
+function addCustomCartoon(data) {
+    const list = loadCustomCartoons();
+    if (list.some(c => c.name.toLowerCase() === data.name.toLowerCase())) return false;
+    if (CARTOON_PRESETS.some(c => c.name.toLowerCase() === data.name.toLowerCase())) return false;
+    list.push(data);
+    return saveCustomCartoons(list);
+}
+
+// ===================================================================
+// ===== الصور =====
+// ===================================================================
+function compressImage(dataUrl, maxWidth = 400) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            try {
+                const canvas = document.createElement('canvas');
+                const ratio = Math.min(maxWidth / img.width, 1);
+                canvas.width = img.width * ratio;
+                canvas.height = img.height * ratio;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.5));
+            } catch (e) { reject(e); }
+        };
+        img.onerror = () => reject(new Error('image load failed'));
+        img.src = dataUrl;
+    });
+}
+
+// ===================================================================
+// ===== الأصوات (Web Audio API) =====
+// ===================================================================
+let soundEnabled = true;
+let _audioCtx = null;
+function _getAudioCtx() {
+    try {
+        if (!_audioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            _audioCtx = new Ctx();
+        }
+        if (_audioCtx.state === 'suspended') _audioCtx.resume().catch(() => {});
+        return _audioCtx;
+    } catch (e) { return null; }
+}
+function _playTone(freq, duration, type, volume, delay, sweepTo) {
+    const ctx = _getAudioCtx();
+    if (!ctx) return;
+    try {
+        const t0 = ctx.currentTime + (delay || 0);
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(freq, t0);
+        if (sweepTo) osc.frequency.exponentialRampToValueAtTime(sweepTo, t0 + duration);
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(volume || 0.12, t0 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t0); osc.stop(t0 + duration + 0.05);
+    } catch (e) {}
+}
+const SOUND_LIBRARY = {
+    click: [{ f: 800, d: 0.04, t: 'sine', v: 0.07 }],
+    toggle: [{ f: 600, d: 0.05, t: 'triangle', v: 0.09 }, { f: 900, d: 0.05, t: 'triangle', v: 0.07, at: 0.04 }],
+    copy: [{ f: 1200, d: 0.08, t: 'sine', v: 0.09 }, { f: 1600, d: 0.10, t: 'sine', v: 0.09, at: 0.06 }],
+    modalOpen: [{ f: 300, d: 0.14, t: 'sine', v: 0.09, sweep: 800 }],
+    modalClose: [{ f: 800, d: 0.14, t: 'sine', v: 0.09, sweep: 300 }],
+    error: [{ f: 280, d: 0.12, t: 'sawtooth', v: 0.07 }, { f: 200, d: 0.18, t: 'sawtooth', v: 0.07, at: 0.10 }],
+    correct: [{ f: 523.25, d: 0.10, t: 'sine', v: 0.11 }, { f: 659.25, d: 0.10, t: 'sine', v: 0.11, at: 0.09 }, { f: 783.99, d: 0.10, t: 'sine', v: 0.11, at: 0.18 }, { f: 1046.50, d: 0.28, t: 'sine', v: 0.12, at: 0.27 }],
+    wrong: [{ f: 220, d: 0.14, t: 'square', v: 0.08 }, { f: 165, d: 0.22, t: 'square', v: 0.08, at: 0.13 }],
+    win: [{ f: 523.25, d: 0.12, t: 'triangle', v: 0.11 }, { f: 659.25, d: 0.12, t: 'triangle', v: 0.11, at: 0.10 }, { f: 783.99, d: 0.12, t: 'triangle', v: 0.11, at: 0.20 }, { f: 1046.50, d: 0.14, t: 'triangle', v: 0.12, at: 0.30 }, { f: 783.99, d: 0.12, t: 'triangle', v: 0.11, at: 0.46 }, { f: 1046.50, d: 0.36, t: 'triangle', v: 0.13, at: 0.58 }],
+    join: [{ f: 523.25, d: 0.14, t: 'sine', v: 0.10 }, { f: 783.99, d: 0.22, t: 'sine', v: 0.10, at: 0.12 }],
+    leave: [{ f: 659.25, d: 0.14, t: 'sine', v: 0.10 }, { f: 392.00, d: 0.22, t: 'sine', v: 0.10, at: 0.12 }],
+    roundStart: [{ f: 523.25, d: 0.11, t: 'triangle', v: 0.11 }, { f: 659.25, d: 0.11, t: 'triangle', v: 0.11, at: 0.10 }, { f: 783.99, d: 0.24, t: 'triangle', v: 0.11, at: 0.20 }],
+    yourTurn: [{ f: 880.00, d: 0.16, t: 'sine', v: 0.13 }, { f: 1108.73, d: 0.16, t: 'sine', v: 0.13, at: 0.14 }, { f: 1318.51, d: 0.28, t: 'sine', v: 0.13, at: 0.28 }],
+    notify: [{ f: 1046.50, d: 0.12, t: 'sine', v: 0.10 }, { f: 1568.00, d: 0.20, t: 'sine', v: 0.10, at: 0.10 }],
+    chat: [{ f: 1400, d: 0.08, t: 'sine', v: 0.08 }, { f: 1800, d: 0.10, t: 'sine', v: 0.07, at: 0.06 }]
+};
+function playSound(type) {
+    if (!soundEnabled) return;
+    const notes = SOUND_LIBRARY[type];
+    if (!notes) return;
+    notes.forEach(n => _playTone(n.f, n.d, n.t, n.v, n.at || 0, n.sweep));
+}
+function toggleSound() {
+    if (soundEnabled) { playSound('toggle'); soundEnabled = false; }
+    else { soundEnabled = true; playSound('toggle'); }
+    storage.setItem(SOUND_KEY, String(soundEnabled));
+    updateSoundButton();
+}
+function updateSoundButton() {
+    const btn = document.getElementById('soundToggleBtn');
+    if (!btn) return;
+    btn.className = soundEnabled ? 'sound-btn active' : 'sound-btn';
+    btn.textContent = soundEnabled ? '🔊' : '🔇';
+}
+
+// ===================================================================
+// ===== الإشعارات =====
+// ===================================================================
+let notifEnabled = false;
+function updateNotifButton() {
+    const btn = document.getElementById('notifToggleBtn');
+    if (!btn) return;
+    if (!('Notification' in window)) { btn.style.display = 'none'; return; }
+    btn.style.display = '';
+    const perm = Notification.permission;
+    if (perm === 'denied') { btn.textContent = '🔕'; btn.style.opacity = '0.5'; }
+    else if (notifEnabled && perm === 'granted') { btn.textContent = '🔔'; btn.style.opacity = '1'; }
+    else { btn.textContent = '🔕'; btn.style.opacity = '1'; }
+}
+function toggleNotifications() {
+    playSound('toggle');
+    if (!('Notification' in window)) { showToast('متصفحك لا يدعم الإشعارات', 'error'); return; }
+    if (Notification.permission === 'denied') { showAlert('الإشعارات محظورة من إعدادات المتصفح.', '🔕 محظورة'); return; }
+    if (!notifEnabled) {
+        const enable = () => {
+            notifEnabled = true;
+            storage.setItem(NOTIF_KEY, 'true');
+            updateNotifButton();
+            showToast('🔔 تم تفعيل الإشعارات', 'success');
+        };
+        if (Notification.permission === 'granted') enable();
+        else Notification.requestPermission().then(p => { if (p === 'granted') enable(); else showToast('لم يُمنح الإذن', 'error'); updateNotifButton(); }).catch(() => {});
+    } else {
+        notifEnabled = false;
+        storage.setItem(NOTIF_KEY, 'false');
+        updateNotifButton();
+        showToast('🔕 تم إيقاف الإشعارات', 'info');
+    }
+}
+function showNotification(title, body) {
+    if (!notifEnabled || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (!document.hidden) return;
+    try {
+        const n = new Notification(title, { body, tag: 'cartoon-game', silent: true });
+        setTimeout(() => { try { n.close(); } catch (e) {} }, 6000);
+        n.onclick = () => { try { window.focus(); n.close(); } catch (e) {} };
+    } catch (e) {}
+}
+
+// ===================================================================
+// ===== Toast / Alert / Confirm / Celebrate =====
+// ===================================================================
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    const icons = { success: '✅', error: '⚠️', info: 'ℹ️' };
+    const iconSpan = document.createElement('span');
+    iconSpan.textContent = icons[type] || '💬';
+    const msgSpan = document.createElement('span');
+    msgSpan.textContent = String(message);
+    toast.appendChild(iconSpan); toast.appendChild(msgSpan);
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+function showAlert(message, title = 'تنبيه') {
+    playSound('modalOpen');
+    const container = document.getElementById('modalContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    const box = document.createElement('div');
+    box.className = 'modal-box';
+    const h3 = document.createElement('h3');
+    h3.textContent = String(title);
+    const p = document.createElement('p');
+    p.textContent = String(message);
+    const btn = document.createElement('button');
+    btn.className = 'btn green'; btn.textContent = 'حسناً';
+    btn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+    box.addEventListener('click', e => e.stopPropagation());
+    box.appendChild(h3); box.appendChild(p); box.appendChild(btn);
+    overlay.appendChild(box);
+    container.appendChild(overlay);
+}
+function closeModal() {
+    playSound('modalClose');
+    document.getElementById('modalContainer').innerHTML = '';
+}
+function showConfirm(message, title = 'تأكيد') {
+    return new Promise(resolve => {
+        playSound('modalOpen');
+        const container = document.getElementById('modalContainer');
+        if (!container) { resolve(false); return; }
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        const box = document.createElement('div');
+        box.className = 'modal-box';
+        const h3 = document.createElement('h3');
+        h3.textContent = String(title);
+        const p = document.createElement('p');
+        p.textContent = String(message);
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display:flex; gap:10px; margin-top:8px;';
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'btn cancel-btn';
+        cancelBtn.style.cssText = 'flex:1; font-size:1rem;';
+        cancelBtn.textContent = 'إلغاء';
+        const okBtn = document.createElement('button');
+        okBtn.className = 'btn green';
+        okBtn.style.cssText = 'flex:1; font-size:1rem;';
+        okBtn.textContent = 'تأكيد';
+        const close = (result) => {
+            playSound('modalClose');
+            container.innerHTML = '';
+            resolve(result);
+        };
+        cancelBtn.addEventListener('click', () => close(false));
+        okBtn.addEventListener('click', () => close(true));
+        overlay.addEventListener('click', () => close(false));
+        box.addEventListener('click', e => e.stopPropagation());
+        btns.appendChild(cancelBtn); btns.appendChild(okBtn);
+        box.appendChild(h3); box.appendChild(p); box.appendChild(btns);
+        overlay.appendChild(box);
+        container.innerHTML = '';
+        container.appendChild(overlay);
+        setTimeout(() => okBtn.focus(), 50);
+    });
+}
+function celebrate() {
+    const container = document.getElementById('celebrationContainer');
+    if (!container) return;
+    const colors = ['#E6473C', '#4CAF7D', '#3D8BD4', '#FFC93C', '#FF6B5A'];
+    for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.6 + 's';
+        confetti.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        container.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+    }
+    playSound('win');
+}
+
+// ===================================================================
+// ===== الوضع الليلي =====
+// ===================================================================
+function applyTheme() {
+    const isDark = storage.getItem(THEME_KEY) === 'dark';
+    document.body.classList.toggle('dark', isDark);
+    updateThemeButton();
+}
+function toggleTheme() {
+    playSound('click');
+    document.body.classList.add('theme-transitioning');
+    const isDark = document.body.classList.toggle('dark');
+    storage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    updateThemeButton();
+    setTimeout(() => document.body.classList.remove('theme-transitioning'), 350);
+}
+function updateThemeButton() {
+    const btn = document.getElementById('themeToggleBtn');
+    if (!btn) return;
+    const isDark = document.body.classList.contains('dark');
+    btn.textContent = isDark ? '☀️' : '🌙';
+}
+
+// ===================================================================
+// ===== الاتصال (PeerJS) =====
+// ===================================================================
+let myPeer = null;
+let isHost = false;
+let hostConn = null;
+let clientConns = {};
+let roomCode = null;
+let state = null;
+
+function setConnectionBadge(connected, text) {
+    const badge = document.getElementById('connectionBadge');
+    const txt = document.getElementById('connectionText');
+    if (!badge || !txt) return;
+    if (connected) {
+        badge.classList.remove('offline');
+        txt.textContent = text || 'متصل';
+    } else {
+        badge.classList.add('offline');
+        txt.textContent = text || 'غير متصل';
+    }
+}
+
+function generateRoomCode() {
+    return Math.random().toString(36).substring(2, 6).toUpperCase();
+}
+
+function destroyPeer() {
+    Object.values(clientConns).forEach(c => { try { c.conn.close(); } catch (e) {} });
+    clientConns = {};
+    if (hostConn) { try { hostConn.close(); } catch (e) {} hostConn = null; }
+    if (myPeer) { try { myPeer.destroy(); } catch (e) {} myPeer = null; }
+    isHost = false;
+}
+
+// ===================================================================
+// ===== Host: إنشاء غرفة =====
+// ===================================================================
+function createRoom() {
+    playSound('click');
+    const maxP = document.getElementById('maxPlayersSelect')?.value || 3;
+
+    const tryCreate = (attempts = 0) => {
+        const code = generateRoomCode();
+        const peerId = PEER_PREFIX + code;
+        const peer = new Peer(peerId, { debug: 0 });
+
+        const timeout = setTimeout(() => {
+            try { peer.destroy(); } catch (e) {}
+            if (attempts < 3) {
+                tryCreate(attempts + 1);
+            } else {
+                showToast('تعذّر الاتصال بالخادم. تحقق من الإنترنت.', 'error');
+            }
+        }, 15000);
+
+        peer.on('open', () => {
+            clearTimeout(timeout);
+            myPeer = peer;
+            isHost = true;
+            roomCode = code;
+            state = {
+                code: roomCode,
+                status: 'lobby',
+                maxPlayers: parseInt(maxP),
+                uploader: me,
+                players: [me],
+                cartoonName: '',
+                imageUrl: '',
+                description: '',
+                guesses: [],
+                scores: {},
+                round: 1,
+                winner: null,
+                chat: []
+            };
+            lastSeenRound = 1;
+            lastWinnerId = null;
+            lastChatLength = 0;
+            lastReadChatCount = 0;
+            storage.setItem(LAST_ROOM_CODE_KEY, code);
+
+            peer.on('connection', handleIncomingConnection);
+            peer.on('error', err => { console.error('Peer error (host):', err); });
+
+            setConnectionBadge(true, 'متصل');
+            playSound('join');
+            showToast(`تم إنشاء الغرفة ${roomCode}`, 'success');
+            renderApp();
+        });
+
+        peer.on('error', err => {
+            clearTimeout(timeout);
+            try { peer.destroy(); } catch (e) {}
+            if (err.type === 'unavailable-id' && attempts < 5) {
+                tryCreate(attempts + 1);
+            } else {
+                console.error('Create room error:', err);
+                showToast('فشل إنشاء الغرفة. حاول مرة أخرى.', 'error');
+            }
+        });
+    };
+    tryCreate();
+}
+
+// ===================================================================
+// ===== Host: استقبال الاتصالات =====
+// ===================================================================
+function handleIncomingConnection(conn) {
+    conn.on('open', () => {});
+    conn.on('data', (data) => {
+        if (!data || !data.type) return;
+        handleClientMessage(conn, data);
+    });
+    conn.on('close', () => { handleClientDisconnect(conn); });
+    conn.on('error', err => { console.error('Client conn error:', err); });
+}
+
+function handleClientMessage(conn, data) {
+    const entry = clientConns[conn.peer];
+    const playerId = entry ? entry.playerId : null;
+
+    switch (data.type) {
+        case 'join': {
+            const player = data.player;
+            if (!player || !player.id || !player.name) return;
+            if (state.players.length >= state.maxPlayers && !state.players.some(p => p.id === player.id)) {
+                try { conn.send({ type: 'error', message: 'الغرفة ممتلئة!' }); } catch (e) {}
+                setTimeout(() => { try { conn.close(); } catch (e) {} }, 500);
+                return;
+            }
+            if (state.status !== 'lobby' && !state.players.some(p => p.id === player.id)) {
+                try { conn.send({ type: 'error', message: 'اللعبة بدأت بالفعل.' }); } catch (e) {}
+                setTimeout(() => { try { conn.close(); } catch (e) {} }, 500);
+                return;
+            }
+            clientConns[conn.peer] = { conn, playerId: player.id };
+            if (!state.players.some(p => p.id === player.id)) {
+                state.players.push({ id: player.id, name: player.name });
+                playSound('join');
+                showToast(`👋 ${player.name} انضم إلى الغرفة`, 'info');
+            }
+            try { conn.send({ type: 'state', state: state }); } catch (e) {}
+            broadcastState();
+            renderApp();
+            break;
+        }
+        case 'leave': {
+            if (playerId) removePlayerFromState(playerId);
+            try { conn.close(); } catch (e) {}
+            delete clientConns[conn.peer];
+            broadcastState();
+            renderApp();
+            break;
+        }
+        case 'guess': {
+            if (!playerId || !state) return;
+            if (state.status !== 'playing' || state.winner) return;
+            const text = String(data.text || '').trim();
+            if (!text) return;
+            if (!state.guesses) state.guesses = [];
+            if (state.guesses.some(g => g.playerId === playerId && g.status === 'pending')) return;
+            const player = state.players.find(p => p.id === playerId);
+            if (!player) return;
+            state.guesses.push({ playerId, playerName: player.name, text, status: 'pending' });
+            broadcastState();
+            renderApp();
+            break;
+        }
+        case 'resetGuess': {
+            if (!playerId || !state || !state.guesses) return;
+            if (state.winner) return;
+            state.guesses = state.guesses.filter(g => g.playerId !== playerId);
+            broadcastState();
+            renderApp();
+            break;
+        }
+        case 'chat': {
+            if (!playerId || !state) return;
+            const text = String(data.text || '').trim().slice(0, 200);
+            if (!text) return;
+            const player = state.players.find(p => p.id === playerId);
+            if (!player) return;
+            if (!state.chat) state.chat = [];
+            state.chat.push({
+                id: 'm_' + Math.random().toString(36).substr(2, 9),
+                playerId,
+                playerName: player.name,
+                text,
+                ts: Date.now()
+            });
+            if (state.chat.length > 100) state.chat = state.chat.slice(-100);
+            if (!chatVisible) {
+                playSound('chat');
+                showToast(`💬 ${player.name}: ${text.slice(0, 40)}${text.length > 40 ? '...' : ''}`, 'info');
+            }
+            broadcastState();
+            renderApp();
+            break;
+        }
+        case 'ping': {
+            try { conn.send({ type: 'pong' }); } catch (e) {}
+            break;
+        }
+    }
+}
+
+function handleClientDisconnect(conn) {
+    const entry = clientConns[conn.peer];
+    if (entry && entry.playerId) {
+        removePlayerFromState(entry.playerId);
+        delete clientConns[conn.peer];
+        playSound('leave');
+        showToast('👋 غادر لاعب الغرفة', 'info');
+        broadcastState();
+        renderApp();
+    }
+}
+
+function removePlayerFromState(playerId) {
+    if (!state) return;
+    state.players = state.players.filter(p => p.id !== playerId);
+    state.guesses = (state.guesses || []).filter(g => g.playerId !== playerId);
+    if (state.scores && state.scores[playerId] !== undefined) delete state.scores[playerId];
+    if (state.winner === playerId) state.winner = null;
+    if (state.players.length === 0) {
+        destroyPeer();
+        roomCode = null; state = null;
+    } else if (state.uploader && state.uploader.id === playerId) {
+        if (state.status === 'playing' || state.status === 'setup') {
+            state.status = 'lobby';
+            state.cartoonName = ''; state.imageUrl = ''; state.description = '';
+            state.guesses = []; state.winner = null;
+        }
+        state.uploader = state.players[0];
+    }
+}
+
+function broadcastState() {
+    if (!isHost || !state) return;
+    const msg = { type: 'state', state: state };
+    Object.values(clientConns).forEach(({ conn }) => {
+        try { conn.send(msg); } catch (e) {}
+    });
+}
+
+// ===================================================================
+// ===== Client: الانضمام =====
+// ===================================================================
+function joinRoom() {
+    playSound('click');
+    const input = document.getElementById('roomCodeInput');
+    if (!input) return;
+    const code = input.value.trim().toUpperCase();
+    roomCodeInputVal = code;
+    if (!code || code.length !== 4) {
+        showToast('أدخل كود غرفة صحيحاً (4 أحرف)', 'error');
+        input.focus(); return;
+    }
+
+    destroyPeer();
+    setConnectionBadge(false, 'جاري الاتصال...');
+
+    const peer = new Peer(undefined, { debug: 0 });
+    const timeout = setTimeout(() => {
+        try { peer.destroy(); } catch (e) {}
+        setConnectionBadge(false, 'فشل الاتصال');
+        showToast('تعذّر الاتصال بالخادم. حاول مرة أخرى.', 'error');
+    }, 15000);
+
+    peer.on('open', () => {
+        clearTimeout(timeout);
+        const conn = peer.connect(PEER_PREFIX + code, { reliable: true });
+
+        const connTimeout = setTimeout(() => {
+            try { conn.close(); peer.destroy(); } catch (e) {}
+            setConnectionBadge(false, 'غير متصل');
+            showAlert('لم يتم العثور على الغرفة أو أن المنشئ غير متصل.', '❌ فشل الانضمام');
+        }, 12000);
+
+        conn.on('open', () => {
+            clearTimeout(connTimeout);
+            myPeer = peer;
+            isHost = false;
+            hostConn = conn;
+            roomCode = code;
+            storage.setItem(LAST_ROOM_CODE_KEY, code);
+            setConnectionBadge(true, 'متصل');
+            try { conn.send({ type: 'join', player: me }); } catch (e) {}
+        });
+
+        conn.on('data', (data) => {
+            if (!data || !data.type) return;
+            handleHostMessage(data);
+        });
+
+        conn.on('close', () => { handleHostDisconnect(); });
+        conn.on('error', err => { console.error('Conn error:', err); });
+    });
+
+    peer.on('error', err => {
+        clearTimeout(timeout);
+        console.error('Peer error (client):', err);
+        setConnectionBadge(false, 'خطأ');
+        showToast('حدث خطأ في الاتصال. حاول مرة أخرى.', 'error');
+    });
+}
+
+function handleHostMessage(data) {
+    if (data.type === 'state') {
+        if (state === null) {
+            lastReadChatCount = (data.state.chat || []).length;
+        }
+        applyRemoteState(data.state);
+    } else if (data.type === 'error') {
+        showAlert(data.message || 'حدث خطأ', '⚠️');
+        setTimeout(() => leaveRoomSilently(), 2000);
+    }
+}
+
+function handleHostDisconnect() {
+    setConnectionBadge(false, 'انقطع الاتصال');
+    showToast('انقطع الاتصال بالمنشئ', 'error');
+    hostConn = null;
+    if (myPeer) { try { myPeer.destroy(); } catch (e) {} myPeer = null; }
+    isHost = false;
+    roomCode = null; state = null;
+    renderApp();
+}
+
+function applyRemoteState(newState) {
+    const prevWinner = state ? state.winner : null;
+    const prevPlayersCount = state ? state.players.length : 0;
+    const prevRound = state ? state.round : null;
+    const prevPlayerIds = state ? state.players.map(p => p.id) : [];
+    const isFirstState = (state === null);
+    const prevChatLen = lastChatLength;
+
+    const activeEl = document.activeElement;
+    const focusId = activeEl && activeEl.id ? activeEl.id : null;
+    const focusVal = activeEl && activeEl.tagName === 'INPUT' && activeEl.type === 'text' ? activeEl.value : null;
+    let selStart = null, selEnd = null;
+    if (activeEl && activeEl.tagName === 'INPUT' && typeof activeEl.selectionStart === 'number') {
+        selStart = activeEl.selectionStart;
+        selEnd = activeEl.selectionEnd;
+    }
+
+    state = newState;
+    const newChatLen = (state.chat || []).length;
+    if (!isFirstState && newChatLen > prevChatLen) {
+        const newMessages = (state.chat || []).slice(prevChatLen);
+        const fromOthers = newMessages.filter(m => m.playerId !== me.id);
+        if (fromOthers.length > 0 && !chatVisible) {
+            playSound('chat');
+            const last = fromOthers[fromOthers.length - 1];
+            showToast(`💬 ${last.playerName}: ${last.text.slice(0, 40)}${last.text.length > 40 ? '...' : ''}`, 'info');
+        }
+    }
+    lastChatLength = newChatLen;
+
+    if (state.round !== lastSeenRound) {
+        lastSeenRound = state.round;
+        resetDraft();
+        lastWrongGuessText = '';
+        currentGuessInputVal = '';
+    }
+
+    renderApp();
+
+    if (state.winner && state.winner !== prevWinner && state.winner !== lastWinnerId) {
+        lastWinnerId = state.winner;
+        celebrate();
+        const winnerName = state.players.find(p => p.id === state.winner)?.name || 'لاعب';
+        showToast(`🏆 ${winnerName} فاز بالجولة!`, 'success');
+    }
+    if (state.players.length > prevPlayersCount && state.status === 'lobby') {
+        const newPlayers = state.players.filter(p => !prevPlayerIds.includes(p.id));
+        newPlayers.forEach(p => {
+            playSound('join');
+            showToast(`👋 ${p.name} انضم إلى الغرفة`, 'info');
+        });
+    }
+    if (state.players.length < prevPlayersCount && state.status === 'lobby') {
+        playSound('leave');
+        showToast(`👋 غادر لاعب الغرفة`, 'info');
+    }
+    if (prevRound !== null && state.round > prevRound) {
+        const isMyTurn = state.uploader && state.uploader.id === me.id;
+        if (isMyTurn) {
+            playSound('yourTurn');
+            showToast(`🎨 الجولة ${state.round} — دورك!`, 'info');
+            showNotification('🎨 دورك الآن!', 'اختر كرتوناً ليخمّنه الآخرون');
+        } else {
+            playSound('roundStart');
+            showToast(`🎬 الجولة ${state.round} بدأت!`, 'info');
+            showNotification('🎬 جولة جديدة', `الجولة ${state.round} بدأت`);
+        }
+    }
+
+    if (focusId) {
+        setTimeout(() => {
+            const el = document.getElementById(focusId);
+            if (!el) return;
+            if (focusVal !== null && el.value === '' && focusVal !== '') el.value = focusVal;
+            el.focus();
+            if (selStart !== null && selEnd !== null) {
+                try { el.setSelectionRange(selStart, selEnd); } catch (e) {}
+            }
+        }, 0);
+    }
+}
+
+function leaveRoomSilently() {
+    if (hostConn) { try { hostConn.close(); } catch (e) {} }
+    if (myPeer) { try { myPeer.destroy(); } catch (e) {} myPeer = null; }
+    hostConn = null; isHost = false;
+    roomCode = null; state = null;
+    renderApp();
+}
+
+function sendToHost(msg) {
+    if (isHost) return false;
+    if (!hostConn) return false;
+    try { hostConn.send(msg); return true; } catch (e) { return false; }
+}
+
+// ===================================================================
+// ===== حالة التطبيق =====
+// ===================================================================
+let me = null;
+let lastWinnerId = null;
+let lastSeenRound = 0;
+let authError = '';
+let authErrorField = '';
+let usernameInputVal = '';
+let lastWrongGuessText = '';
+let currentGuessInputVal = '';
+let roomCodeInputVal = '';
+let entryMode = 'create';
+let inGame = false;
+let cartoonBoxVisible = false;
+let mafiaBoxVisible = false;
+
+let setupMode = 'none';
+let draftCartoonName = null;
+let customImageData = null;
+let draftDescription = null;
+let customNameInputVal = '', customChannelInputVal = '', customPlanetInputVal = '',
+    customCountInputVal = '', customCategoryInputVal = '', customCharactersInputVal = '', customStoryInputVal = '';
+let selectedChannel = null;
+
+// ===== الدردشة =====
+let chatVisible = false;
+let lastReadChatCount = 0;
+let lastChatLength = 0;
+
+// ===================================================================
+// ===== مسودة النموذج المخصص =====
+// ===================================================================
+function saveDraftCustom() {
+    try {
+        const draft = {
+            name: customNameInputVal, channel: customChannelInputVal, planet: customPlanetInputVal,
+            count: customCountInputVal, category: customCategoryInputVal,
+            characters: customCharactersInputVal, story: customStoryInputVal
+        };
+        const hasData = Object.values(draft).some(v => v && v.trim());
+        if (hasData) storage.setItem(DRAFT_CUSTOM_KEY, JSON.stringify(draft));
+        else storage.removeItem(DRAFT_CUSTOM_KEY);
+    } catch (e) {}
+}
+function loadDraftCustom() {
+    try {
+        const raw = storage.getItem(DRAFT_CUSTOM_KEY);
+        if (!raw) return false;
+        const draft = JSON.parse(raw);
+        customNameInputVal = draft.name || '';
+        customChannelInputVal = draft.channel || '';
+        customPlanetInputVal = draft.planet || '';
+        customCountInputVal = draft.count || '';
+        customCategoryInputVal = draft.category || '';
+        customCharactersInputVal = draft.characters || '';
+        customStoryInputVal = draft.story || '';
+        return Object.values(draft).some(v => v && v.trim());
+    } catch (e) { return false; }
+}
+function clearDraftCustom() { storage.removeItem(DRAFT_CUSTOM_KEY); }
+
+// ===================================================================
+// ===== الدخول باسم فقط =====
+// ===================================================================
+function handleSignIn(e) {
+    e.preventDefault();
+    playSound('click');
+    authError = ''; authErrorField = '';
+    const username = document.getElementById('authUsername')?.value.trim();
+    usernameInputVal = username || '';
+    if (!username) {
+        authError = 'اكتب اسمك أولاً';
+        renderApp(); return;
+    }
+    if (username.length < 2 || username.length > 20) {
+        authError = 'الاسم يجب أن يكون بين 2 و 20 حرفاً';
+        renderApp(); return;
+    }
+    const playerId = getOrCreatePlayerId();
+    me = { id: playerId, name: username };
+    storage.setItem(USERNAME_KEY, username);
+    authError = ''; usernameInputVal = '';
+    showToast(`مرحباً ${username}!`, 'success');
+    renderApp();
+}
+
+function logout() {
+    playSound('click');
+    if (roomCode || inGame) {
+        showConfirm('سيتم فقدان تقدّمك في الغرفة الحالية.', '🚪 تسجيل الخروج').then(ok => {
+            if (!ok) return;
+            doLogout();
+        });
+        return;
+    }
+    doLogout();
+}
+async function doLogout() {
+    await removeMeFromRoom();
+    destroyPeer();
+    me = null;
+    roomCode = null; state = null;
+    cartoonBoxVisible = false; mafiaBoxVisible = false;
+    inGame = false; lastWinnerId = null; lastSeenRound = 0;
+    lastWrongGuessText = ''; currentGuessInputVal = ''; roomCodeInputVal = '';
+    lastChatLength = 0; lastReadChatCount = 0; chatVisible = false;
+    storage.removeItem(USERNAME_KEY);
+    authError = ''; usernameInputVal = '';
+    setConnectionBadge(true, 'متصل');
+    showToast('تم تسجيل الخروج', 'info');
+    renderApp();
+}
+
+async function removeMeFromRoom() {
+    if (!roomCode || !state || !me) return;
+    if (isHost) {
+        removePlayerFromState(me.id);
+        if (state && state.players.length > 0) broadcastState();
+        destroyPeer();
+    } else {
+        if (hostConn) {
+            try { hostConn.send({ type: 'leave' }); } catch (e) {}
+            try { hostConn.close(); } catch (e) {}
+        }
+        if (myPeer) { try { myPeer.destroy(); } catch (e) {} myPeer = null; }
+        hostConn = null;
+    }
+}
+
+// ===================================================================
+// ===== المتجر =====
+// ===================================================================
+function exitGame() {
+    if (roomCode) {
+        showConfirm('سيتم فقدان تقدّمك في الغرفة الحالية.', '🚪 الخروج من اللعبة').then(ok => {
+            if (!ok) return;
+            doExitGame();
+        });
+        return;
+    }
+    doExitGame();
+}
+async function doExitGame() {
+    playSound('click');
+    await removeMeFromRoom();
+    inGame = false; cartoonBoxVisible = false; mafiaBoxVisible = false;
+    roomCode = null; state = null;
+    lastWinnerId = null; lastSeenRound = 0;
+    currentGuessInputVal = ''; lastWrongGuessText = '';
+    lastChatLength = 0; lastReadChatCount = 0; chatVisible = false;
+    setConnectionBadge(true, 'متصل');
+    renderApp();
+}
+function startGame() { playSound('click'); if (!me) { renderApp(); return; } inGame = true; renderApp(); }
+function toggleCartoonBox() { playSound('toggle'); cartoonBoxVisible = !cartoonBoxVisible; if (cartoonBoxVisible) mafiaBoxVisible = false; renderApp(); }
+function toggleMafiaBox() { playSound('toggle'); mafiaBoxVisible = !mafiaBoxVisible; if (mafiaBoxVisible) cartoonBoxVisible = false; renderApp(); }
+function showMafiaComingSoon() { playSound('click'); showAlert('لعبة المافيا قادمة قريباً! 🕵️', '🕵️ المافيا'); }
+
+// ===================================================================
+// ===== دوال اللعب =====
+// ===================================================================
+async function leaveRoom() {
+    const inPlaying = state && (state.status === 'playing' || state.status === 'setup');
+    const msg = inPlaying ? 'ستفقد تقدّمك في الجولة الحالية.' : 'هل تريد مغادرة هذه الغرفة؟';
+    const ok = await showConfirm(msg, '🚪 مغادرة الغرفة');
+    if (!ok) return;
+    playSound('click');
+    await removeMeFromRoom();
+    roomCode = null; state = null;
+    lastWinnerId = null; lastSeenRound = 0;
+    lastWrongGuessText = ''; currentGuessInputVal = '';
+    lastChatLength = 0; lastReadChatCount = 0; chatVisible = false;
+    resetDraft();
+    setConnectionBadge(true, 'متصل');
+    renderApp();
+}
+
+function copyRoomCode() {
+    playSound('click');
+    const doCopy = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
+        }
+        return Promise.resolve(false);
+    };
+    doCopy(roomCode).then(ok => {
+        if (ok) { playSound('copy'); showToast('✅ تم نسخ كود الغرفة!', 'success'); flashCopyIcon(); }
+        else fallbackCopy(roomCode);
+    });
+}
+function flashCopyIcon() {
+    const icon = document.querySelector('.code-badge .copy-icon');
+    if (!icon) return;
+    icon.classList.add('copied');
+    icon.textContent = '✓';
+    setTimeout(() => { icon.classList.remove('copied'); icon.textContent = '📋'; }, 1200);
+}
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try {
+        document.execCommand('copy');
+        playSound('copy'); showToast('✅ تم نسخ كود الغرفة!', 'success'); flashCopyIcon();
+    } catch (e) { showAlert(`انسخ الكود يدوياً:\n\n${text}`, '📋 كود الغرفة'); }
+    document.body.removeChild(ta);
+}
+
+function canStartGame() { return state && state.players && state.players.length >= 2; }
+
+function goToSetup() {
+    playSound('click');
+    if (!isHost) { showToast('فقط المنشئ يمكنه بدء اللعبة', 'error'); return; }
+    if (!canStartGame()) { showAlert('يجب لاعبان على الأقل.', '⏳'); return; }
+    state.status = 'setup'; state.winner = null;
+    resetDraft();
+    broadcastState();
+    renderApp();
+}
+
+function toggleSetupMode(mode) {
+    playSound('toggle');
+    setupMode = setupMode === mode ? 'none' : mode;
+    if (mode === 'custom' && setupMode === 'custom') {
+        const hasDraft = loadDraftCustom();
+        if (hasDraft) showToast('📝 تم استرجاع مسودتك', 'info');
+    }
+    renderApp();
+}
+function selectChannel(ch) { playSound('click'); selectedChannel = ch; renderApp(); }
+function selectPresetCartoon(el) {
+    playSound('click');
+    const name = el && el.dataset ? el.dataset.name : null;
+    if (!name) return;
+    draftCartoonName = name;
+    const found = getAllCartoons().find(p => p.name === name);
+    if (found) draftDescription = found.description;
+    setupMode = 'none';
+    showToast(`تم اختيار: ${name}`, 'info');
+    renderApp();
+}
+function clearCartoonSelection() { playSound('click'); draftCartoonName = null; draftDescription = null; customImageData = null; renderApp(); }
+async function cancelCustomCartoon() {
+    playSound('click');
+    const ok = await showConfirm('سيتم فقدان المسودة المحفوظة نهائياً.', '⚠️ إلغاء النموذج');
+    if (!ok) return;
+    setupMode = 'none';
+    customNameInputVal = ''; customChannelInputVal = ''; customPlanetInputVal = '';
+    customCountInputVal = ''; customCategoryInputVal = ''; customCharactersInputVal = ''; customStoryInputVal = '';
+    clearDraftCustom();
+    renderApp();
+}
+function resetDraft() {
+    draftCartoonName = null; customImageData = null; draftDescription = null;
+    customNameInputVal = ''; customChannelInputVal = ''; customPlanetInputVal = '';
+    customCountInputVal = ''; customCategoryInputVal = ''; customCharactersInputVal = ''; customStoryInputVal = '';
+    setupMode = 'none'; selectedChannel = null;
+}
+function saveCustomCartoon() {
+    playSound('click');
+    const name = document.getElementById('customNameField')?.value.trim();
+    if (!name) { showToast('اكتب اسم الكرتون!', 'error'); return; }
+    if (CARTOON_PRESETS.some(c => c.name.toLowerCase() === name.toLowerCase()) ||
+        loadCustomCartoons().some(c => c.name.toLowerCase() === name.toLowerCase())) {
+        showToast('هذا الكرتون موجود!', 'error'); return;
+    }
+    const channel = document.getElementById('customChannelField')?.value.trim() || '';
+    const planet = document.getElementById('customPlanetField')?.value.trim() || '';
+    const count = document.getElementById('customCountField')?.value.trim() || '';
+    const category = document.getElementById('customCategoryField')?.value.trim() || '';
+    const characters = document.getElementById('customCharactersField')?.value.trim() || '';
+    const story = document.getElementById('customStoryField')?.value.trim() || '';
+    const description = fmtDesc({ channel, planet, count, category, characters, story });
+    const data = { name, description, isCustom: true, addedBy: me.id, addedByName: me.name, timestamp: Date.now() };
+    if (addCustomCartoon(data)) {
+        draftCartoonName = name; draftDescription = description; setupMode = 'none';
+        customNameInputVal = ''; customChannelInputVal = ''; customPlanetInputVal = '';
+        customCountInputVal = ''; customCategoryInputVal = ''; customCharactersInputVal = ''; customStoryInputVal = '';
+        clearDraftCustom();
+        showToast(`تم إضافة "${name}"!`, 'success');
+        renderApp();
+    }
+}
+async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file || !file.type || !file.type.startsWith('image/')) { showToast('اختر صورة صالحة', 'error'); return; }
+    try {
+        const reader = new FileReader();
+        reader.onload = async function(evt) {
+            try {
+                const compressed = await compressImage(evt.target.result, 400);
+                customImageData = compressed;
+                showToast('تم رفع الصورة!', 'success');
+                renderApp();
+            } catch (err) { showToast('تعذّر معالجة الصورة', 'error'); }
+        };
+        reader.readAsDataURL(file);
+    } catch (err) { showToast('خطأ', 'error'); }
+}
+function publishGame() {
+    playSound('click');
+    if (!isHost) { showToast('فقط المنشئ يمكنه النشر', 'error'); return; }
+    if (!draftCartoonName) { showToast('اختر كرتوناً أولاً!', 'error'); return; }
+    state.cartoonName = draftCartoonName;
+    state.imageUrl = customImageData || '';
+    state.description = draftDescription || 'لا توجد معلومات إضافية.';
+    state.status = 'playing';
+    state.guesses = []; state.winner = null;
+    lastWinnerId = null; lastWrongGuessText = ''; currentGuessInputVal = '';
+    broadcastState();
+    resetDraft();
+    showToast('تم نشر السؤال!', 'success');
+    renderApp();
+}
+function submitGuess() {
+    playSound('click');
+    if (!state || state.status !== 'playing') return;
+    if (state.winner) { showToast('انتهت الجولة!', 'error'); return; }
+    const input = document.getElementById('myGuessInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) { showToast('اكتب تخمينك!', 'error'); input.focus(); return; }
+    if (state.guesses && state.guesses.some(g => g.playerId === me.id && g.status === 'pending')) {
+        showToast('لديك تخمين معلق!', 'error'); return;
+    }
+    if (isHost) {
+        if (!state.guesses) state.guesses = [];
+        state.guesses.push({ playerId: me.id, playerName: me.name, text, status: 'pending' });
+        broadcastState();
+        lastWrongGuessText = ''; currentGuessInputVal = '';
+        showToast('تم إرسال تخمينك!', 'success');
+        renderApp();
+    } else {
+        if (sendToHost({ type: 'guess', text })) {
+            currentGuessInputVal = '';
+            lastWrongGuessText = '';
+            showToast('تم إرسال تخمينك!', 'success');
+        } else {
+            showToast('فقدان الاتصال بالمنشئ', 'error');
+        }
+    }
+}
+function resetMyGuess() {
+    playSound('click');
+    if (!state || !state.guesses) return;
+    if (state.winner) { showToast('انتهت الجولة!', 'error'); return; }
+    const myGuess = state.guesses.find(g => g.playerId === me.id);
+    if (myGuess && myGuess.status === 'wrong') lastWrongGuessText = myGuess.text;
+    currentGuessInputVal = '';
+    if (isHost) {
+        state.guesses = state.guesses.filter(g => g.playerId !== me.id);
+        broadcastState();
+        renderApp();
+    } else {
+        sendToHost({ type: 'resetGuess' });
+    }
+}
+function undoVerdictGuess(playerId) {
+    playSound('click');
+    if (!isHost || !state || !state.guesses) return;
+    const guess = state.guesses.find(g => g.playerId === playerId);
+    if (!guess || guess.status !== 'wrong') return;
+    guess.status = 'pending';
+    broadcastState();
+    showToast('تم التراجع', 'info');
+    renderApp();
+}
+function verdictGuess(playerId, verdict) {
+    if (!isHost || !state || !state.guesses) return;
+    const guess = state.guesses.find(g => g.playerId === playerId);
+    if (!guess || guess.status !== 'pending') return;
+    if (verdict === 'correct' && state.winner) { showToast('تم تحديد الفائز!', 'error'); return; }
+    if (verdict === 'correct') playSound('correct'); else playSound('wrong');
+    guess.status = verdict;
+    if (verdict === 'correct') {
+        state.guesses.forEach(g => { if (g.playerId !== playerId && g.status === 'pending') g.status = 'wrong'; });
+        state.scores[playerId] = (state.scores[playerId] || 0) + 1;
+        state.winner = playerId; lastWinnerId = playerId;
+        const winnerName = state.players.find(p => p.id === playerId)?.name || 'لاعب';
+        showToast(`🏆 ${winnerName} فاز!`, 'success');
+        celebrate();
+    }
+    broadcastState();
+    renderApp();
+}
+function nextRound() {
+    playSound('click');
+    if (!isHost || !state) return;
+    if (!canStartGame()) { showAlert('يجب لاعبان على الأقل.', '⏳'); return; }
+    if (state.uploader) {
+        const idx = state.players.findIndex(p => p.id === state.uploader.id);
+        const nextIdx = (idx >= 0) ? (idx + 1) % state.players.length : 0;
+        state.uploader = state.players[nextIdx];
+    }
+    state.round = (state.round || 1) + 1;
+    lastSeenRound = state.round;
+    state.cartoonName = ''; state.imageUrl = ''; state.description = '';
+    state.guesses = []; state.winner = null; state.status = 'setup';
+    lastWinnerId = null; lastWrongGuessText = ''; currentGuessInputVal = '';
+    resetDraft();
+    broadcastState();
+    showToast(`بدء الجولة ${state.round}`, 'info');
+    renderApp();
+}
+function openProfile() {
+    playSound('click');
+    const inRoom = !!roomCode;
+    const myScore = (state && state.scores && state.scores[me.id]) || 0;
+    const role = isHost ? 'المنشئ (Host)' : (inRoom ? 'لاعب' : '—');
+    const msg = inRoom
+        ? `الاسم: ${me.name}\nالدور: ${role}\nنقاطك: ${myScore}`
+        : `الاسم: ${me.name}\n\nلست في غرفة حالياً.`;
+    showAlert(msg, 'الملف الشخصي 👤');
+}
+
+// ===================================================================
+// ===== الدردشة النصية =====
+// ===================================================================
+function toggleChat() {
+    playSound('toggle');
+    chatVisible = !chatVisible;
+    if (chatVisible && state && state.chat) {
+        lastReadChatCount = state.chat.length;
+    }
+    renderChat();
+    updateChatBadge();
+    if (chatVisible) {
+        setTimeout(() => {
+            const input = document.getElementById('chatInput');
+            if (input) input.focus();
+            scrollChatToBottom();
+        }, 100);
+    }
+}
+
+function scrollChatToBottom() {
+    const box = document.getElementById('chatMessages');
+    if (!box) return;
+    box.scrollTop = box.scrollHeight;
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    if (!input) return;
+    const text = input.value.trim().slice(0, 200);
+    if (!text) return;
+    if (!state || !roomCode) return;
+
+    if (isHost) {
+        if (!state.chat) state.chat = [];
+        state.chat.push({
+            id: 'm_' + Math.random().toString(36).substr(2, 9),
+            playerId: me.id,
+            playerName: me.name,
+            text,
+            ts: Date.now()
+        });
+        if (state.chat.length > 100) state.chat = state.chat.slice(-100);
+        input.value = '';
+        lastReadChatCount = state.chat.length;
+        broadcastState();
+        renderApp();
+    } else {
+        if (sendToHost({ type: 'chat', text })) {
+            input.value = '';
+        } else {
+            showToast('فقدان الاتصال بالمنشئ', 'error');
+        }
+    }
+}
+
+function renderChat() {
+    const panel = document.getElementById('chatPanel');
+    const messages = document.getElementById('chatMessages');
+    const fab = document.getElementById('chatFab');
+    if (!panel || !messages || !fab) return;
+
+    if (!roomCode || !state) {
+        fab.classList.remove('visible');
+        panel.classList.remove('visible');
+        return;
+    }
+
+    fab.classList.add('visible');
+    panel.classList.toggle('visible', chatVisible);
+
+    if (!chatVisible) return;
+
+    const msgs = state.chat || [];
+    const wasAtBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 60;
+    const prevCount = messages.querySelectorAll('.chat-msg').length;
+
+    if (msgs.length === 0) {
+        messages.innerHTML = '<div class="chat-msg system">لا توجد رسائل بعد — ابدأ الدردشة!</div>';
+        return;
+    }
+
+    messages.innerHTML = msgs.map(m => {
+        const isMe = m.playerId === me.id;
+        return `
+            <div class="chat-msg ${isMe ? 'me' : ''}">
+                ${!isMe ? `<span class="chat-name">${esc(m.playerName)}</span>` : ''}
+                <span>${esc(m.text)}</span>
+            </div>
+        `;
+    }).join('');
+
+    if (wasAtBottom || msgs.length > prevCount) {
+        scrollChatToBottom();
+    }
+}
+
+function updateChatBadge() {
+    const badge = document.getElementById('chatBadge');
+    if (!badge) return;
+    if (!state || !state.chat || !roomCode) {
+        badge.style.display = 'none';
+        return;
+    }
+    const unread = state.chat.length - lastReadChatCount;
+    if (unread > 0 && !chatVisible) {
+        badge.style.display = 'flex';
+        badge.textContent = unread > 99 ? '99+' : unread;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// ===================================================================
+// ===== التهيئة =====
+// ===================================================================
+function initEventDelegation() {
+    const app = document.getElementById('app');
+    if (!app || app._delegationAttached) return;
+    app._delegationAttached = true;
+    app.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        if (action === 'verdict') verdictGuess(btn.dataset.playerId, btn.dataset.verdict);
+        else if (action === 'undo-verdict') undoVerdictGuess(btn.dataset.playerId);
+        else if (action === 'select-channel') selectChannel(btn.dataset.channel);
+    });
+}
+
+function initApp() {
+    const savedSound = storage.getItem(SOUND_KEY);
+    soundEnabled = savedSound === null ? true : (savedSound === 'true');
+    updateSoundButton();
+
+    const savedNotif = storage.getItem(NOTIF_KEY);
+    notifEnabled = savedNotif === 'true';
+    updateNotifButton();
+
+    applyTheme();
+    initEventDelegation();
+
+    const savedUsername = storage.getItem(USERNAME_KEY);
+    if (savedUsername) {
+        const playerId = getOrCreatePlayerId();
+        me = { id: playerId, name: savedUsername };
+    }
+
+    roomCodeInputVal = storage.getItem(LAST_ROOM_CODE_KEY) || '';
+    inGame = false; cartoonBoxVisible = false; mafiaBoxVisible = false;
+    authError = ''; usernameInputVal = '';
+    lastWinnerId = null; lastSeenRound = 0;
+    lastChatLength = 0; lastReadChatCount = 0; chatVisible = false;
+
+    setConnectionBadge(true, 'متصل');
+    renderApp();
+}
+
+function updateLogoutButton() {
+    const btn = document.getElementById('logoutBtnTop');
+    if (!btn) return;
+    if (me) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+}
+
+function cartoonMatchesChannel(c, ch) {
+    if (!c || !c.description) return false;
+    const firstLine = (c.description.split('\n')[0] || '').replace('القناة:', '').trim();
+    if (!firstLine) return false;
+    if (firstLine === ch) return true;
+    if (firstLine.includes(ch)) return true;
+    if (ch === 'قناة أجيال' && firstLine.includes('أجيال')) return true;
+    return false;
+}
+
+// ===================================================================
+// ===== الرندر =====
+// ===================================================================
+function renderApp() {
+    const app = document.getElementById('app');
+    if (!app) return;
+    updateLogoutButton();
+    renderChat();
+    updateChatBadge();
+
+    if (!me) {
+        app.innerHTML = `
+            <div class="auth-screen">
+                <div class="auth-card">
+                    <div class="auth-logo">🎮</div>
+                    <h1 class="brand">عالم <span>الألعاب</span></h1>
+                    <p class="sub">اكتب اسمك للبدء — بدون تسجيل، بدون كلمة مرور</p>
+                    ${authError ? `<div class="auth-error"><span>⚠️</span><span>${esc(authError)}</span></div>` : ''}
+                    <form onsubmit="handleSignIn(event)">
+                        <div class="field">
+                            <span class="f-icon">👤</span>
+                            <input type="text" id="authUsername" placeholder="اسمك (مثلاً: أحمد)" autocomplete="username" maxlength="20" value="${escAttr(usernameInputVal)}" required>
+                        </div>
+                        <button type="submit" class="btn-auth green-btn">
+                            🚀 الدخول والبدء
+                        </button>
+                    </form>
+                    <div class="auth-foot">🌐 اللعب المباشر عبر PeerJS (P2P)</div>
+                </div>
+            </div>
+        `;
+        setTimeout(() => {
+            const el = document.getElementById('authUsername');
+            if (el) el.focus();
+        }, 80);
+        return;
+    }
+
+    if (!inGame) {
+        app.innerHTML = `
+            <div class="welcome-banner">
+                <span>👋 مرحباً ${esc(me.name)}</span>
+                <span style="font-size: 0.75rem; color: #888; font-weight: 600;">🌐 P2P</span>
+            </div>
+            <div class="auth-hero clickable-hero" style="margin-bottom:14px; padding:20px;" onclick="toggleCartoonBox()">
+                <h1 class="logo" style="font-size:2.6rem;">🎨 خمّن <span>الكرتون</span></h1>
+                <p class="tagline">لعبة تحدي ذكريات الطفولة والرسوم المتحركة</p>
+                <div class="hero-hint">${cartoonBoxVisible ? '👆 اضغط للإخفاء' : '👆 اضغط لعرض اللعبة'}</div>
+            </div>
+            ${cartoonBoxVisible ? `
+                <div class="store-card reveal">
+                    <span class="game-icon">🎮</span>
+                    <h2>خمّن الكرتون</h2>
+                    <p class="desc">لعبة جماعية لحزر الكراتين الشهيرة</p>
+                    <p style="font-size:0.9rem; color:#777; margin-bottom:20px;">العب مع أصدقائك أونلاين من أي مكان</p>
+                    <button class="btn-play" onclick="startGame()">▶ تشغيل</button>
+                    <div class="stats">
+                        <span>🎭 ${CARTOON_PRESETS.length + loadCustomCartoons().length} كرتون</span>
+                        <span>👥 حتى 6</span>
+                    </div>
+                </div>
+            ` : ''}
+            <div class="auth-hero mafia-hero clickable-hero" style="margin-top:16px; padding:20px;" onclick="toggleMafiaBox()">
+                <h1 class="logo" style="font-size:2.6rem;">🕵️ <span class="mafia-span">المافيا</span></h1>
+                <p class="tagline">لعبة الاستنتاج والتخفي الجماعية</p>
+                <div class="hero-hint">${mafiaBoxVisible ? '👆 اضغط للإخفاء' : '👆 اضغط لعرض اللعبة'}</div>
+            </div>
+            ${mafiaBoxVisible ? `
+                <div class="store-card reveal" style="background: linear-gradient(145deg, #f8f4fb 0%, #ede4f5 100%);">
+                    <span class="game-icon">🕵️</span>
+                    <h2 style="color: var(--mafia);">المافيا</h2>
+                    <p class="desc">اكتشف المافيا قبل أن يقتلوك!</p>
+                    <div class="coming-soon">
+                        <span class="cs-icon">🚧</span>
+                        <h3>قريباً جداً!</h3>
+                        <p>نعمل على تطوير اللعبة بأفضل تجربة ممكنة</p>
+                    </div>
+                    <button class="btn-play mafia-btn" onclick="showMafiaComingSoon()">🔔 ذكرني</button>
+                </div>
+            ` : ''}
+        `;
+        return;
+    }
+
+    if (!roomCode) {
+        app.innerHTML = `
+            <div class="auth-hero" style="margin-bottom:14px; padding:18px;">
+                <h1 class="logo" style="font-size:2.6rem;">🎨 خمّن <span>الكرتون</span></h1>
+                <p class="tagline">• لعبة جماعية أونلاين •</p>
+            </div>
+            <div class="welcome-banner">👋 مرحبا ${esc(me.name)}.</div>
+            <div class="menu-grid">
+                <button class="menu-box-btn red" onclick="exitGame()">خروج 🚪</button>
+                <button class="menu-box-btn blue" onclick="openProfile()">الملف 👤</button>
+                <button class="menu-box-btn ${entryMode === 'create' ? 'blue' : ''}" onclick="entryMode='create';renderApp()">إنشاء غرفة ➕</button>
+                <button class="menu-box-btn ${entryMode === 'join' ? 'blue' : ''}" onclick="entryMode='join';renderApp()">انضمام 🚪</button>
+            </div>
+            <div class="panel" style="padding:20px;">
+                ${entryMode === 'create' ? `
+                    <label>عدد اللاعبين</label>
+                    <select id="maxPlayersSelect">
+                        <option value="2" selected>2 لاعبين</option>
+                        <option value="3">3 لاعبين</option>
+                        <option value="4">4 لاعبين</option>
+                        <option value="5">5 لاعبين</option>
+                        <option value="6">6 لاعبين</option>
+                    </select>
+                    <button class="btn yellow" onclick="createRoom()" style="margin-top:4px;">🏗️ أنشئ الغرفة</button>
+                    <div style="font-size:0.75rem; color:#888; text-align:center; margin-top:10px;">سيتم إنشاء كود غرفة تشاركه مع أصدقائك</div>
+                ` : `
+                    <label>كود الغرفة</label>
+                    <input type="text" id="roomCodeInput" placeholder="مثال: A1B2" value="${escAttr(roomCodeInputVal)}" oninput="roomCodeInputVal=this.value.toUpperCase();" style="text-transform:uppercase; text-align:center; letter-spacing:5px; font-weight:700; font-size:1.3rem;" autocomplete="off" maxlength="4">
+                    ${roomCodeInputVal ? `<div style="font-size:0.75rem; color:#888; text-align:center; margin-top:-8px; margin-bottom:10px;">آخر كود استخدمته</div>` : ''}
+                    <button class="btn yellow" onclick="joinRoom()" style="margin-top:4px;">🚪 ادخل الغرفة</button>
+                `}
+            </div>
+        `;
+        setTimeout(() => {
+            const input = document.getElementById('roomCodeInput');
+            if (input && !roomCodeInputVal) input.focus();
+        }, 100);
+        return;
+    }
+
+    if (!state) {
+        app.innerHTML = `<div class="panel"><div class="waiting-msg">جاري تحميل الغرفة...<span class="spinner"></span></div></div>`;
+        return;
+    }
+
+    const playersCount = state.players.length;
+    const needMorePlayers = playersCount < 2;
+
+    if (state.status === 'lobby') {
+        const progressDots = Array.from({ length: state.maxPlayers }, (_, i) =>
+            `<div class="progress-dot ${i < playersCount ? 'filled' : ''}"></div>`
+        ).join('');
+        app.innerHTML = `
+            <div class="top-header-row">
+                <button class="menu-box-btn red" style="padding:6px 14px; font-size:0.85rem;" onclick="leaveRoom()">خروج 🚪</button>
+                <h1 class="logo" style="font-size:2rem; margin:0;">🎨 خمّن <span>الكرتون</span></h1>
+            </div>
+            <div class="panel center">
+                <p style="font-weight:700; margin:0;">كود الغرفة — شاركه مع أصدقائك</p>
+                <div class="code-badge">
+                    <span>${esc(roomCode)}</span>
+                    <span class="copy-icon" onclick="copyRoomCode()" title="نسخ">📋</span>
+                </div>
+                <p style="font-weight:700; font-size:0.95rem; margin:6px 0 4px; color:#555;">
+                    ${playersCount} / ${state.maxPlayers} لاعبين
+                </p>
+                <div class="player-progress">${progressDots}</div>
+                <div class="players">
+                    ${state.players.map(p => `
+                        <span class="chip ${p.id===me.id?'me':''} ${state.uploader && state.uploader.id===p.id?'owner':''}">
+                            ${esc(p.name)} ${state.uploader && state.uploader.id===p.id?'👑':''}
+                        </span>
+                    `).join('')}
+                </div>
+                <div class="divider"></div>
+                ${isHost ? `
+                    ${needMorePlayers ? `
+                        <div class="waiting-notice">
+                            <span class="icon">⏳</span>
+                            <div class="title">بانتظار المزيد من اللاعبين</div>
+                            <div class="text">
+                                شارك كود الغرفة <strong>${esc(roomCode)}</strong> مع أصدقائك.
+                            </div>
+                        </div>
+                        <button class="btn disabled-lock" disabled style="margin-top:4px;">🔒 بدء اللعبة (تحتاج لاعبين)</button>
+                        <button class="btn blue small" style="margin-top:12px;" onclick="copyRoomCode()">📋 نسخ الكود</button>
+                    ` : `
+                        <div style="background:#EAF6EF; border:2px solid var(--green); border-radius:18px; padding:12px; margin-bottom:14px; font-weight:700; font-size:0.9rem; color:var(--green-dark);">
+                            ✅ جاهز للبدء!
+                        </div>
+                        <button class="btn green" onclick="goToSetup()">بدء اختيار الكرتون 🎨</button>
+                    `}
+                ` : `
+                    <div class="waiting-msg">بانتظار المنشئ<span class="spinner"></span></div>
+                    <button class="btn blue small" style="margin-top:12px;" onclick="copyRoomCode()">📋 نسخ الكود</button>
+                `}
+            </div>
+        `;
+        return;
+    }
+
+    if (state.status === 'setup' && !isHost) {
+        app.innerHTML = `
+            <div class="top-header-row">
+                <button class="menu-box-btn red" style="padding:6px 14px; font-size:0.85rem;" onclick="leaveRoom()">خروج 🚪</button>
+                <h1 class="logo" style="font-size:2rem; margin:0;">🎨 خمّن <span>الكرتون</span></h1>
+            </div>
+            <div class="panel center">
+                <p style="font-weight:700; margin:0;">كود الغرفة</p>
+                <div class="code-badge"><span>${esc(roomCode)}</span></div>
+                <p style="font-weight:700; font-size:0.9rem; margin:4px 0 8px; color:#555;">الجولة ${state.round || 1} 🎬</p>
+                <div class="players">
+                    ${state.players.map(p => `
+                        <span class="chip ${p.id===me.id?'me':''} ${state.uploader && state.uploader.id===p.id?'owner':''}">
+                            ${esc(p.name)} ${state.uploader && state.uploader.id===p.id?'👑':''}
+                        </span>
+                    `).join('')}
+                </div>
+                <div class="divider"></div>
+                <div class="waiting-notice">
+                    <span class="icon">🎨</span>
+                    <div class="title">المنشئ يختار الكرتون...</div>
+                    <div class="text">${esc(state.uploader?.name || 'المنشئ')} يجهّز التحدي.</div>
+                </div>
+                <div class="waiting-msg">جاري التجهيز<span class="spinner"></span></div>
+            </div>
+        `;
+        return;
+    }
+
+    if (state.status === 'setup' && isHost) {
+        const channelsList = ["سبيستون", "Cartoon Network (CN)", "براعم", "MBC3", "قناة أجيال"];
+        const allCartoons = getAllCartoons();
+        const customList = loadCustomCartoons();
+        const isCustomSelected = draftCartoonName && customList.some(c => c.name === draftCartoonName);
+        const hasDraft = setupMode === 'custom' && storage.getItem(DRAFT_CUSTOM_KEY);
+        app.innerHTML = `
+            <div class="top-header-row">
+                <button class="menu-box-btn red" style="padding:6px 14px; font-size:0.85rem;" onclick="leaveRoom()">خروج 🚪</button>
+                <h1 class="logo" style="font-size:2rem; margin:0;">🎨 خمّن <span>الكرتون</span></h1>
+            </div>
+            <div class="panel center" style="padding:14px; margin-bottom:14px;">
+                <p style="font-weight:700; margin:0;">كود الغرفة</p>
+                <div class="code-badge" style="font-size:1.4rem; padding:4px 14px;">
+                    <span>${esc(roomCode)}</span>
+                    <span class="copy-icon" onclick="copyRoomCode()">📋</span>
+                </div>
+                <p style="font-weight:700; font-size:0.9rem; margin:4px 0 8px; color:#555;">الجولة ${state.round || 1} 🎬</p>
+                <div class="players">
+                    ${state.players.map(p => `
+                        <span class="chip ${p.id===me.id?'me':''} ${state.uploader && state.uploader.id===p.id?'owner':''}">
+                            ${esc(p.name)} ${state.uploader && state.uploader.id===p.id?'👑':''}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span class="badge-tag" style="background:var(--ink); color:#fff; font-size:0.8rem; padding:4px 12px;">الإعداد</span>
+                    <span style="font-weight:700; font-size:0.9rem;">دورك ترفع كرتون</span>
+                </div>
+                <label>اسم الكرتون (الحل)</label>
+                <div style="display:flex; gap:8px; margin-bottom:12px;">
+                    ${draftCartoonName ? `
+                        <div style="flex:1; background:var(--green); color:#fff; border:2px solid var(--ink); border-radius:16px; padding:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 0 var(--ink);">
+                            <span>✓ ${esc(draftCartoonName)} ${isCustomSelected ? '⭐' : ''}</span>
+                            <button onclick="clearCartoonSelection()" style="background:var(--primary); color:#fff; border:2px solid var(--ink); border-radius:10px; padding:2px 12px; cursor:pointer; font-weight:700; font-size:0.8rem;">إلغاء ✕</button>
+                        </div>
+                    ` : `<div style="flex:1; background:#f9f6f0; border:2px dashed var(--ink); border-radius:16px; padding:12px; font-weight:700; color:#777; text-align:center;">ما اخترت بعد</div>`}
+                </div>
+                <div style="display:flex; gap:8px; margin-bottom:12px;">
+                    <button class="btn blue small" style="flex:1; font-size:0.9rem;" onclick="toggleSetupMode('presets')">📺 القنوات</button>
+                    <button class="btn small" style="flex:1; font-size:0.9rem; background:#333; box-shadow: 0 4px 0 #111;" onclick="toggleSetupMode('custom')">➕ من عندي</button>
+                </div>
+                ${setupMode === 'presets' ? `
+                    <label>اختر القناة:</label>
+                    <div class="cartoon-picks" style="margin-bottom:10px;">
+                        ${channelsList.map(ch => `
+                            <div class="cartoon-chip ${selectedChannel===ch?'selected':''}" data-action="select-channel" data-channel="${escAttr(ch)}">${esc(ch)}</div>
+                        `).join('')}
+                    </div>
+                    ${selectedChannel ? `
+                        <div style="font-weight:700; font-size:0.9rem; color:var(--blue); margin-bottom:6px; text-align:right;">كراتين ${esc(selectedChannel)}:</div>
+                        <div class="cartoon-picks" style="max-height:240px; overflow-y:auto; padding:4px;">
+                            ${allCartoons.filter(c => cartoonMatchesChannel(c, selectedChannel)).map(c => `
+                                <div class="cartoon-chip ${draftCartoonName===c.name?'selected':''}"
+                                     onclick="selectPresetCartoon(this)"
+                                     data-name="${escAttr(c.name)}">${esc(c.name)} ${customList.some(x => x.name===c.name)?'⭐':''}</div>
+                            `).join('') || '<div class="waiting-msg" style="width:100%;">لا توجد كراتين لهذه القناة</div>'}
+                        </div>
+                    ` : `<div class="waiting-msg">👆 اختر قناة</div>`}
+                    <div class="divider"></div>
+                ` : ''}
+                ${setupMode === 'custom' ? `
+                    <div class="custom-fields">
+                        ${hasDraft ? `<div class="draft-hint"><span>📝</span><span>مسودة محفوظة</span></div>` : ''}
+                        <label>اسم الكرتون *</label>
+                        <input type="text" id="customNameField" value="${escAttr(customNameInputVal)}" oninput="customNameInputVal=this.value; saveDraftCustom();">
+                        <label>القناة</label>
+                        <input type="text" id="customChannelField" value="${escAttr(customChannelInputVal)}" oninput="customChannelInputVal=this.value; saveDraftCustom();">
+                        <label>الكوكب</label>
+                        <input type="text" id="customPlanetField" value="${escAttr(customPlanetInputVal)}" oninput="customPlanetInputVal=this.value; saveDraftCustom();">
+                        <label>عدد الشخصيات</label>
+                        <input type="text" id="customCountField" value="${escAttr(customCountInputVal)}" oninput="customCountInputVal=this.value; saveDraftCustom();">
+                        <label>التصنيف</label>
+                        <input type="text" id="customCategoryField" value="${escAttr(customCategoryInputVal)}" oninput="customCategoryInputVal=this.value; saveDraftCustom();">
+                        <label>الشخصيات</label>
+                        <textarea id="customCharactersField" rows="3" oninput="customCharactersInputVal=this.value; saveDraftCustom();">${esc(customCharactersInputVal)}</textarea>
+                        <label>القصة</label>
+                        <textarea id="customStoryField" rows="3" oninput="customStoryInputVal=this.value; saveDraftCustom();">${esc(customStoryInputVal)}</textarea>
+                        <div style="display:flex; gap:8px; margin-top:8px;">
+                            <button class="btn green small" style="flex:1;" onclick="saveCustomCartoon()">💾 حفظ</button>
+                            <button class="btn red small" style="flex:1;" onclick="cancelCustomCartoon()">إلغاء ❌</button>
+                        </div>
+                    </div>
+                ` : ''}
+                ${draftCartoonName ? `
+                    <label>صورة التحدي (اختياري)</label>
+                    <div class="file-drop ${customImageData?'has-img':''}" onclick="document.getElementById('fileInput').click()">
+                        ${customImageData ? `<img src="${escAttr(customImageData)}">` : `<span>📷 اضغط لرفع صورة</span>`}
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                ` : ''}
+                ${draftDescription && setupMode !== 'custom' ? `<div class="desc-card">${esc(draftDescription)}</div>` : ''}
+                <button class="btn green" style="margin-top:6px;" onclick="publishGame()">انشر السؤال 🚀</button>
+                <button class="btn red small" style="margin-top:8px;" onclick="leaveRoom()">إلغاء</button>
+            </div>
+        `;
+        return;
+    }
+
+    if (state.status === 'playing') {
+        const myGuessObj = state.guesses ? state.guesses.find(g => g.playerId === me.id) : null;
+        const isUploader = state.uploader && state.uploader.id === me.id;
+        app.innerHTML = `
+            <div class="top-header-row">
+                <button class="menu-box-btn red" style="padding:6px 14px; font-size:0.85rem;" onclick="leaveRoom()">خروج 🚪</button>
+                <h1 class="logo" style="font-size:2rem; margin:0;">🎨 خمّن <span>الكرتون</span></h1>
+            </div>
+            <div class="panel center" style="padding:14px; margin-bottom:14px;">
+                <div class="code-badge" style="font-size:1.2rem; padding:4px 14px;">
+                    <span>${esc(roomCode)}</span>
+                    <span class="copy-icon" onclick="copyRoomCode()">📋</span>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:6px 0;">
+                    <span class="badge-tag">الجولة ${state.round || 1}</span>
+                </div>
+                <div class="players">
+                    ${state.players.map(p => `
+                        <span class="chip ${p.id===me.id?'me':''} ${state.uploader && state.uploader.id===p.id?'owner':''}">
+                            ${esc(p.name)} ${state.uploader && state.uploader.id===p.id?'👑':''}
+                        </span>
+                    `).join('')}
+                </div>
+                <div class="scores-row">
+                    ${Object.entries(state.scores || {}).map(([id, score]) => {
+                        const p = state.players.find(x => x.id === id);
+                        return p ? `<span class="chip">${esc(p.name)}: ${esc(score)} 🏆</span>` : '';
+                    }).join('')}
+                </div>
+                ${state.winner ? `
+                    <div class="celebration-msg" style="display:inline-block; margin-top:8px; background:var(--yellow); border:2px solid var(--ink); border-radius:30px; padding:8px 20px; font-weight:700; box-shadow:0 4px 0 var(--ink);">
+                        🏆 الفائز: ${esc(state.players.find(x=>x.id===state.winner)?.name || 'غير معروف')}
+                    </div>
+                ` : ''}
+            </div>
+            <div class="panel">
+                ${state.imageUrl ? `<div class="game-img-wrap"><img src="${escAttr(state.imageUrl)}"></div>` : ''}
+                ${isHost ? `<div class="desc-card">${esc(state.description || '')}</div>` : ''}
+                <div class="divider"></div>
+                ${isHost ? `
+                    <div style="font-weight:700; margin-bottom:10px; color:var(--blue); text-align:right;">الحل: <span style="color:var(--ink); background:var(--yellow); padding:2px 10px; border-radius:20px;">${esc(state.cartoonName)}</span></div>
+                    <div class="divider"></div>
+                    <div style="text-align:center; font-weight:700; color:#666; margin-bottom:10px;">تخمينات (${(state.guesses||[]).length}):</div>
+                    ${(state.guesses||[]).length === 0 ? '<div class="waiting-msg">لا توجد تخمينات بعد...<span class="spinner"></span></div>' : ''}
+                    ${(state.guesses||[]).map(g => `
+                        <div class="guess-item">
+                            <div>
+                                <span style="font-weight:800; color:var(--blue);">${esc(g.playerName)}:</span>
+                                <span class="guess-text ${g.status==='correct'?'correct':(g.status==='wrong'?'wrong':'')}">${esc(g.text)}</span>
+                            </div>
+                            <div class="verdict-btns">
+                                ${g.status==='pending' ? `
+                                    <button class="btn green small" data-action="verdict" data-player-id="${escAttr(g.playerId)}" data-verdict="correct" ${state.winner ? 'disabled' : ''}>✅ صح</button>
+                                    <button class="btn red small" data-action="verdict" data-player-id="${escAttr(g.playerId)}" data-verdict="wrong" ${state.winner ? 'disabled' : ''}>❌ خطأ</button>
+                                ` : g.status==='wrong' ? `
+                                    <span class="badge-tag">خاطئ ❌</span>
+                                    ${!state.winner ? `<button class="btn undo small" data-action="undo-verdict" data-player-id="${escAttr(g.playerId)}">↩️ تراجع</button>` : ''}
+                                ` : `<span class="badge-tag">صحيح ✅</span>`}
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${state.winner ? `<button class="btn green" onclick="nextRound()" style="margin-top:12px;">الجولة التالية ➡️</button>` : ''}
+                ` : `
+                    ${myGuessObj ? `
+                        <div style="text-align:center; font-weight:700; margin-bottom:14px;">
+                            تخمينك: <span style="color:var(--blue); background:var(--yellow); padding:2px 10px; border-radius:20px;">${esc(myGuessObj.text)}</span>
+                            <div style="margin-top:6px;"><span class="badge-tag">${myGuessObj.status==='pending'?'بانتظار المنشئ...':(myGuessObj.status==='correct'?'صحيحة! 🎉':'خاطئة ❌')}</span></div>
+                        </div>
+                        ${myGuessObj.status==='wrong' && !state.winner ? `<button class="btn blue" onclick="resetMyGuess()">محاولة جديدة 🔄</button>` : ''}
+                        ${myGuessObj.status==='correct' ? `<div style="text-align:center; font-weight:700; color:var(--green); padding:14px; background:#EAF6EF; border:2px solid var(--green); border-radius:16px;">🎉 صحيحة!</div>` : ''}
+                        ${myGuessObj.status==='pending' ? `<div class="waiting-msg">بانتظار المنشئ...<span class="spinner"></span></div>` : ''}
+                    ` : (state.winner ? `
+                        <div class="waiting-msg" style="padding: 30px 0;">🏁 انتهت الجولة!</div>
+                    ` : `
+                        <label>ما هو اسم هذا الكرتون؟</label>
+                        ${lastWrongGuessText ? `<div style="font-size:0.8rem; color:#888; margin-bottom:8px; text-align:center;">السابق: <span style="text-decoration:line-through;">${esc(lastWrongGuessText)}</span></div>` : ''}
+                        <input type="text" id="myGuessInput" placeholder="اكتب تخمينك..." value="${escAttr(currentGuessInputVal || lastWrongGuessText)}" oninput="currentGuessInputVal=this.value;" autocomplete="off" style="text-align:center; font-size:1.1rem;">
+                        <button class="btn yellow" onclick="submitGuess()">إرسال التخمين 🎯</button>
+                    `)}
+                `}
+            </div>
+        `;
+        if (!isHost && !myGuessObj && !state.winner) {
+            setTimeout(() => {
+                const input = document.getElementById('myGuessInput');
+                if (input) { input.focus(); input.select(); }
+            }, 100);
+        }
+        return;
+    }
+}
+
+// ===================================================================
+// ===== مستمع لوحة المفاتيح =====
+// ===================================================================
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput && document.activeElement === chatInput) return;
+        const authUser = document.getElementById('authUsername');
+        const roomInput = document.getElementById('roomCodeInput');
+        const guessInput = document.getElementById('myGuessInput');
+        if (authUser && document.activeElement === authUser) return;
+        if (roomInput && document.activeElement === roomInput) joinRoom();
+        else if (guessInput && document.activeElement === guessInput) submitGuess();
+    }
+});
+</script>
+</body>
+</html>
